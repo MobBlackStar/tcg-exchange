@@ -2,9 +2,20 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Card extends Model
 {
-    //
+    use HasFactory;
+
+    // The Guest List: Allowed to be mass-assigned
+    protected $fillable =[
+        'category_id', 
+        'passcode', 
+        'name', 
+        'type', 
+        'description', 
+        'image_url'
+    ];
 }
