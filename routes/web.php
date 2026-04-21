@@ -7,6 +7,7 @@ use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
 use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
+use App\Http\Controllers\NexusController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -27,6 +28,8 @@ Route::middleware('auth')->group(function () {
     Route::delete('/inventory/{listing}', [ListingController::class, 'destroy'])->name('inventory.destroy');
 
     // [MOATAZ DOMAIN: CART]
+    //[TECH LEAD DOMAIN: THE NEXUS]
+    Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');

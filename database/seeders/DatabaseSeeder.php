@@ -2,24 +2,43 @@
 
 namespace Database\Seeders;
 
-use App\Models\User;
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
+use App\Models\User;
+use App\Models\Card;
+use App\Models\Listing;
 
 class DatabaseSeeder extends Seeder
 {
-    use WithoutModelEvents;
-
     /**
      * Seed the application's database.
      */
     public function run(): void
     {
-        // User::factory(10)->create();
+        // 1. Create our Fake Seller (Seto Kaiba)
+        $seller = User::firstOrCreate(
+            ['email' => 'kaiba@corp.com'],[
+                'name' => 'Seto Kaiba',
+                'password' => bcrypt('password123'),
+                'role' => 'duelist',
+                'reputation_score' => 5.00
+            ]
+        );
 
-        User::factory()->create([
-            'name' => 'Test User',
-            'email' => 'test@example.com',
-        ]);
+        // 2. Find the Blue-Eyes White Dragon
+        $blueEyes = Card::where('passcode', 89631139)->first();
+
+        // 3. Create his Listing (only if the card actually exists in the DB)
+        if ($blueEyes) {
+            Listing::firstOrCreate([
+                    'seller_id' => $seller->id,
+                    'card_id' => $blueEyes->id,
+                ],[
+                    'condition' => 'Mint',
+                    'price' => 150.00,
+                    'quantity' => 5,
+                    'is_active' => true
+                ]
+            );
+        }
     }
 }
