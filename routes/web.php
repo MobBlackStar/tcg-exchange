@@ -1,7 +1,10 @@
 <?php
 
-use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\ListingController;
+use App\Http\Controllers\CartController;
+use App\Http\Controllers\OrderController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -15,6 +18,22 @@ Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+
+    // [MOATAZ DOMAIN: INVENTORY]
+    Route::get('/my-inventory', [ListingController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory/add', [ListingController::class, 'store'])->name('inventory.store');
+    Route::delete('/inventory/{listing}', [ListingController::class, 'destroy'])->name('inventory.destroy');
+
+    // [MOATAZ DOMAIN: CART]
+    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+
+    // [MOATAZ DOMAIN: CHECKOUT & ORDERS]
+    Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
+    Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
+    Route::patch('/order/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 });
 
 require __DIR__.'/auth.php';
