@@ -5,6 +5,8 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\ListingController;
 use App\Http\Controllers\CartController;
 use App\Http\Controllers\OrderController;
+use App\Http\Controllers\ReviewController;
+use App\Http\Controllers\ChatController;
 
 Route::get('/', function () {
     return view('welcome');
@@ -34,6 +36,13 @@ Route::middleware('auth')->group(function () {
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
     Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::patch('/order/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
+
+    // [MOATAZ DOMAIN: REVIEWS]
+    Route::post('/review/store', [ReviewController::class, 'store'])->name('reviews.store');
+
+    // [MOATAZ & SARAH DOMAIN: AJAX CHAT API]
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/fetch/{receiver_id}', [ChatController::class, 'fetchMessages'])->name('chat.fetch');
 });
 
 require __DIR__.'/auth.php';
