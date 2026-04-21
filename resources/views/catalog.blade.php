@@ -39,18 +39,17 @@
                 @endphp
 
                 <div class="tcard {{ $glow }}" style="width: 100%; max-width: 320px;">
-                    <div class="titlebar">
-                        <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
-                        <span class="ttl">&gt; {{ $card->passcode }}.bin</span>
-                    </div>
-                    <div class="body" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px;">
-                        <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 200px; height: auto; border: 4px solid var(--ink-c); margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
-                        <h3 style="font-size: 1.1rem; min-height: 2.5rem; display: flex; align-items: center;">{{ $card->name }}</h3>
-                        <p class="mono" style="font-size: 0.8rem; color: var(--a5); opacity: 0.8;">[{{ $card->type }}]</p>
-                        
-                        <div style="margin-top: 24px; width: 100%;">
-                            <a href="#" class="btn outline sm full"><span class="inner">Market Data</span></a>
-                        </div>
+                    <div class="titlebar" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 15px;">
+    <div style="display: flex; align-items: center; gap: 8px;">
+        <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+        <span class="ttl">&gt; {{ $card->passcode }}.bin</span>
+    </div>
+    
+    <!-- THE HEART -->
+    <button class="btn-wishlist" onclick="toggleWishlist(event, {{ $card->id }})" title="Add to Wishlist">
+        <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+    </button>
+</div>
                     </div>
                 </div>
             @empty
