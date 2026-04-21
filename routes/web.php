@@ -1,5 +1,5 @@
 <?php
-
+use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\ProfileController;
 use Illuminate\Support\Facades\Route;
 
@@ -18,3 +18,4 @@ Route::middleware('auth')->group(function () {
 });
 
 require __DIR__.'/auth.php';
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');

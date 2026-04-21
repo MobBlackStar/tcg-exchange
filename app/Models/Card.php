@@ -4,6 +4,8 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Category; 
+
 
 class Card extends Model
 {
@@ -18,4 +20,8 @@ class Card extends Model
         'description', 
         'image_url'
     ];
+    public function category()
+    {
+        return $this->belongsTo(Category::class);
+    }
 }
