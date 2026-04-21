@@ -1,47 +1,59 @@
-<x-guest-layout>
-    <!-- Session Status -->
-    <x-auth-session-status class="mb-4" :status="session('status')" />
+@extends('layouts.master')
 
-    <form method="POST" action="{{ route('login') }}">
-        @csrf
-
-        <!-- Email Address -->
-        <div>
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autofocus autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+@section('content')
+<div class="container-narrow" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <div class="tcard shadow-brick-magenta" style="width: 100%; max-width: 450px;">
+        <div class="titlebar">
+            <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+            <span class="ttl">&gt; system.auth.login</span>
         </div>
+        <div class="corner square bgc-4"></div>
+        <div class="body" style="padding: 40px;">
+            
+            <h2 class="h2 text-stack-sm" style="font-size: 2rem; margin-bottom: 30px; text-align: center;">ACCESS <br/><span class="accent-m">VOID</span></h2>
 
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
+            <!-- Session Status (Handled by Breeze) -->
+            <x-auth-session-status style="color: var(--a5); margin-bottom: 15px;" :status="session('status')" />
 
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="current-password" />
+            <form method="POST" action="{{ route('login') }}" style="display: flex; flex-direction: column; gap: 20px;">
+                @csrf
 
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
+                <!-- Email Address -->
+                <div>
+                    <label for="email" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; EMAIL_ADDRESS</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autofocus
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('email')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; PASSWORD</label>
+                    <input id="password" type="password" name="password" required autocomplete="current-password"
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('password')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Remember Me -->
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <input id="remember_me" type="checkbox" name="remember" style="accent-color: var(--a5);">
+                    <label for="remember_me" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c); font-size: 0.9rem;">Keep session active</label>
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
+                    <button type="submit" class="btn magenta md full">
+                        <span class="inner">INITIALIZE LINK</span>
+                    </button>
+                    
+                    @if (Route::has('password.request'))
+                        <a href="{{ route('password.request') }}" style="text-align: center; font-family: 'Share Tech Mono', monospace; color: var(--chrome-c); font-size: 0.8rem; text-decoration: underline;">
+                            &gt; Recover lost cipher?
+                        </a>
+                    @endif
+                </div>
+            </form>
         </div>
-
-        <!-- Remember Me -->
-        <div class="block mt-4">
-            <label for="remember_me" class="inline-flex items-center">
-                <input id="remember_me" type="checkbox" class="rounded border-gray-300 text-indigo-600 shadow-sm focus:ring-indigo-500" name="remember">
-                <span class="ms-2 text-sm text-gray-600">{{ __('Remember me') }}</span>
-            </label>
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            @if (Route::has('password.request'))
-                <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('password.request') }}">
-                    {{ __('Forgot your password?') }}
-                </a>
-            @endif
-
-            <x-primary-button class="ms-3">
-                {{ __('Log in') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</div>
+@endsection

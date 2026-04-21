@@ -1,52 +1,64 @@
-<x-guest-layout>
-    <form method="POST" action="{{ route('register') }}">
-        @csrf
+@extends('layouts.master')
 
-        <!-- Name -->
-        <div>
-            <x-input-label for="name" :value="__('Name')" />
-            <x-text-input id="name" class="block mt-1 w-full" type="text" name="name" :value="old('name')" required autofocus autocomplete="name" />
-            <x-input-error :messages="$errors->get('name')" class="mt-2" />
+@section('content')
+<div class="container-narrow" style="display: flex; justify-content: center; align-items: center; min-height: 60vh;">
+    <div class="tcard shadow-brick-cyan" style="width: 100%; max-width: 450px;">
+        <div class="titlebar">
+            <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+            <span class="ttl">&gt; system.auth.register</span>
         </div>
+        <div class="corner tri bgc-5"></div>
+        <div class="body" style="padding: 40px;">
+            
+            <h2 class="h2 text-stack-sm" style="font-size: 2rem; margin-bottom: 30px; text-align: center;">NEW <br/><span class="accent-c">DUELIST</span></h2>
 
-        <!-- Email Address -->
-        <div class="mt-4">
-            <x-input-label for="email" :value="__('Email')" />
-            <x-text-input id="email" class="block mt-1 w-full" type="email" name="email" :value="old('email')" required autocomplete="username" />
-            <x-input-error :messages="$errors->get('email')" class="mt-2" />
+            <form method="POST" action="{{ route('register') }}" style="display: flex; flex-direction: column; gap: 20px;">
+                @csrf
+
+                <!-- Name -->
+                <div>
+                    <label for="name" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; CALLSIGN (NAME)</label>
+                    <input id="name" type="text" name="name" value="{{ old('name') }}" required autofocus autocomplete="name"
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('name')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Email Address -->
+                <div>
+                    <label for="email" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; EMAIL_ADDRESS</label>
+                    <input id="email" type="email" name="email" value="{{ old('email') }}" required autocomplete="username"
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('email')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Password -->
+                <div>
+                    <label for="password" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; PASSWORD</label>
+                    <input id="password" type="password" name="password" required autocomplete="new-password"
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('password')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Confirm Password -->
+                <div>
+                    <label for="password_confirmation" style="font-family: 'Share Tech Mono', monospace; color: var(--chrome-c);">&gt; VERIFY_PASSWORD</label>
+                    <input id="password_confirmation" type="password" name="password_confirmation" required autocomplete="new-password"
+                           style="width: 100%; background: var(--ink-c); border: 2px solid var(--a5); color: var(--chrome-c); padding: 12px; margin-top: 5px; font-family: 'Share Tech Mono', monospace;">
+                    <x-input-error :messages="$errors->get('password_confirmation')" style="color: var(--a1); margin-top: 5px;" />
+                </div>
+
+                <!-- Actions -->
+                <div style="display: flex; flex-direction: column; gap: 15px; margin-top: 10px;">
+                    <button type="submit" class="btn cyan md full">
+                        <span class="inner">FORGE ACCOUNT</span>
+                    </button>
+                    
+                    <a href="{{ route('login') }}" style="text-align: center; font-family: 'Share Tech Mono', monospace; color: var(--chrome-c); font-size: 0.8rem; text-decoration: underline;">
+                        &gt; Already registered? Authenticate here.
+                    </a>
+                </div>
+            </form>
         </div>
-
-        <!-- Password -->
-        <div class="mt-4">
-            <x-input-label for="password" :value="__('Password')" />
-
-            <x-text-input id="password" class="block mt-1 w-full"
-                            type="password"
-                            name="password"
-                            required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password')" class="mt-2" />
-        </div>
-
-        <!-- Confirm Password -->
-        <div class="mt-4">
-            <x-input-label for="password_confirmation" :value="__('Confirm Password')" />
-
-            <x-text-input id="password_confirmation" class="block mt-1 w-full"
-                            type="password"
-                            name="password_confirmation" required autocomplete="new-password" />
-
-            <x-input-error :messages="$errors->get('password_confirmation')" class="mt-2" />
-        </div>
-
-        <div class="flex items-center justify-end mt-4">
-            <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500" href="{{ route('login') }}">
-                {{ __('Already registered?') }}
-            </a>
-
-            <x-primary-button class="ms-4">
-                {{ __('Register') }}
-            </x-primary-button>
-        </div>
-    </form>
-</x-guest-layout>
+    </div>
+</div>
+@endsection
