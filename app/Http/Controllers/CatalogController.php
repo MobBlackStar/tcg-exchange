@@ -13,10 +13,12 @@ class CatalogController extends Controller
         // 1. Start the query (Load categories to make it faster)
         $query = Card::with('category');
 
-        // 2. SEARCH: Recherche par mot-clé (Constraint 3C)
+        // 2. SEARCH: Recherche par mot-clé
         if ($request->filled('search')) {
-            $query->where('name', 'like', '%' . $request->search . '%')
+            $query->where(function($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
                   ->orWhere('description', 'like', '%' . $request->search . '%');
+            });
         }
 
         // 3. FILTER: Filtrage par catégorie (Constraint 3C)
