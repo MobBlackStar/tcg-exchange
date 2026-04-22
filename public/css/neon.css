@@ -123,11 +123,13 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 }
 
 /* ===== Layout primitives ===== */
+/* THE WALL: Ensure the container allows full width */
 .container {
-    width: 100%;
-    max-width: 1300px; /* Gives the grid room to breathe */
-    margin: 0 auto;
-    padding: 0 20px;
+    width: 100% !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+    padding: 0 20px !important;
+    display: block !important;
 }
 .container-narrow{max-width:960px;margin:0 auto;padding:0 24px}
 .container-tight{max-width:768px;margin:0 auto;padding:0 24px}
@@ -310,19 +312,22 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 
 /* ===== Features grid ===== */
 .features-grid {
-    display: grid;
-    /* This creates as many columns as possible, at least 300px wide each */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-    gap: 40px;
-    width: 100%;
-    justify-content: center;
-    align-items: start;
+    display: grid !important;
+    /* This tells cards: "Be at least 320px, but grow to fill the rest of the row" */
+    grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; 
+    gap: 40px !important;
+    width: 100% !important;
+    justify-content: center !important;
+    padding: 40px 0 !important;
 }
 @media(min-width:768px){.features-grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.features-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* THE SKELETON + THE UPGRADED PHYSICS */
 .tcard {
+  width: 100% !important;
+    max-width: 350px !important;
+    margin: 0 auto !important;
   position: relative;
   background: hsl(var(--card)/.8);
   backdrop-filter: blur(8px);
@@ -563,4 +568,28 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
     text-transform: uppercase;
     letter-spacing: 2px;
     font-weight: bold;
+}
+/* 1. THE PINK CARD OVERLOAD */
+.tcard.wishlisted {
+    border-color: var(--a4) !important;
+    box-shadow: 6px 6px 0 var(--ink-c), 
+                12px 12px 0 var(--a4), 
+                0 0 30px rgba(255, 0, 255, 0.6) !important;
+    transform: scale(1.02);
+}
+
+/* 2. THE GLITCH VIBRATION ANIMATION */
+@keyframes vibrate {
+    0% { transform: translateX(-50%) translate(0); }
+    20% { transform: translateX(-50%) translate(-3px, 3px); }
+    40% { transform: translateX(-50%) translate(-3px, -3px); }
+    60% { transform: translateX(-50%) translate(3px, 3px); }
+    80% { transform: translateX(-50%) translate(3px, -3px); }
+    100% { transform: translateX(-50%) translate(0); }
+}
+
+.vibrate-alert {
+    animation: vibrate 0.2s linear infinite;
+    border-color: var(--a1) !important; /* Turns Red when vibrating */
+    box-shadow: 0 0 30px var(--a1) !important;
 }

@@ -9,18 +9,33 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\WishlistController;
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+// ==========================================
+// [SARAH DOMAIN: PUBLIC CATALOG & CARDS]
+// ==========================================
+Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/card/{id}', [CatalogController::class, 'show'])->name('card.show'); // Moved outside auth!
+
+// ==========================================
+// [SARAH DOMAIN: WISHLIST]
+// Temporary bypass so Sarah can test without Login
+// ==========================================
+Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
+Route::post('/wishlist/toggle',[WishlistController::class, 'toggle'])->name('wishlist.toggle');
+
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
-// [SARAH DOMAIN: CATALOG] - Public route so anyone can browse cards!
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-
+// ==========================================
+// [LOCKED DOMAIN: MUST BE LOGGED IN]
+// ==========================================
 Route::middleware('auth')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -31,7 +46,7 @@ Route::middleware('auth')->group(function () {
     Route::post('/inventory/add',[ListingController::class, 'store'])->name('inventory.store');
     Route::delete('/inventory/{listing}',[ListingController::class, 'destroy'])->name('inventory.destroy');
 
-    //[MOATAZ DOMAIN: CART]
+    // [MOATAZ DOMAIN: CART]
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
     Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
     Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');

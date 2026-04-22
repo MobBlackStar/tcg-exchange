@@ -39,4 +39,11 @@ class CatalogController extends Controller
 
         return view('catalog', compact('cards', 'categories'));
     }
+    public function show($id)
+{
+    // Find the card or throw a 404 error if it's missing
+    $card = Card::with('category')->findOrFail($id);
+    
+    return view('show', compact('card'));
+}
 }
