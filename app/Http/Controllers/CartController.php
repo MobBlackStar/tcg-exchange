@@ -8,15 +8,19 @@ use App\Models\Listing;
 class CartController extends Controller
 {
     // 1. Show the Cart page
+    // Update this method in your CartController.php
     public function index()
     {
-        // Retrieve the cart from the session, or default to an empty array
+        // Retrieve the cart from the session
         $cart = session()->get('cart', []);
         
-        // Calculate the total price of all items in the cart dynamically
+        // Calculate the total price of all items in the cart
         $total = 0;
         foreach ($cart as $item) {
-            $total += $item['price'] * $item['quantity'];
+            // Ensure $item has 'price' and 'quantity' to avoid crashes
+            $total += (isset($item['price']) && isset($item['quantity'])) 
+                      ? ($item['price'] * $item['quantity']) 
+                      : 0;
         }
 
         return view('cart.index', compact('cart', 'total'));

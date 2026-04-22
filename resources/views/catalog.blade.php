@@ -37,31 +37,43 @@
                 @endphp
 
                 <div class="tcard {{ $glow }}" style="width: 100%; max-width: 320px;">
-                    <!-- TITLEBAR -->
+                    
+                    <!-- UNIFIED TITLEBAR (Sarah's Heart + Fedi's Clean Layout) -->
                     <div class="titlebar" style="display: flex; justify-content: space-between; align-items: center; padding: 8px 15px; border-bottom: 4px solid var(--ink-c);">
                         <div style="display: flex; align-items: center; gap: 8px;">
                             <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
                             <span class="ttl" style="font-size: 10px; font-family: 'Share Tech Mono', monospace;">&gt; {{ $card->passcode }}.bin</span>
                         </div>
-                        <button class="btn-wishlist" onclick="toggleWishlist(event, {{ $card->id }})" title="Add to Wishlist" style="background:none; border: 2px solid var(--a4); color: var(--a4); cursor: pointer; padding: 4px;">
-                            ❤
+                        
+                        <button class="btn-wishlist" onclick="toggleWishlist(event, {{ $card->id }})" title="Add to Wishlist" style="background: none; border: none; color: var(--a4); cursor: pointer;">
+                            <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
                         </button>
                     </div>
 
-                    <!-- BODY -->
-                    <div class="body" style="padding: 25px; display: flex; flex-direction: column; align-items: center; text-align: center;">
-                        <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 180px; height: auto; border: 3px solid #000; margin-bottom: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
-                        
+                    <!-- UNIFIED BODY (With Fedi's Market Value Badge) -->
+                    <div class="body" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px;">
+                        <div style="position: relative; display: inline-block;">
+                            <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 180px; height: auto; border: 3px solid #000; margin-bottom: 15px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                            
+                            <!-- THE MARKET VALUE BADGE (Fedi's Logic) -->
+                            <div style="position: absolute; top: -10px; right: -15px; background: var(--a5); color: var(--ink-c); padding: 4px 8px; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 0.9rem; border: 2px solid var(--ink-c); transform: skewX(-10deg); box-shadow: 4px 4px 0 var(--ink-c);">
+                                @if(isset($card->listings_min_price))
+                                    💎 {{ $card->listings_min_price }} DT
+                                @else
+                                    💎 N/A
+                                @endif
+                            </div>
+                        </div>
+
                         <h3 style="font-size: 1.1rem; min-height: 2.5rem; display: flex; align-items: center; margin-bottom: 5px; font-family: 'Outfit', sans-serif;">{{ $card->name }}</h3>
-                        
                         <p class="mono" style="font-size: 11px; color: var(--a5); margin-bottom: 20px; font-family: 'Share Tech Mono', monospace;">[{{ strtoupper($card->type) }}]</p>
                         
-                        <!-- ACTION BUTTONS -->
+                        <!-- UNIFIED ACTION BUTTONS -->
                         <div style="width: 100%; display: flex; flex-direction: column; gap: 10px;">
                             <a href="{{ route('card.show', $card->id) }}" class="btn outline sm full" style="text-decoration: none; border: 2px solid var(--a5); color: var(--a5); padding: 8px; font-family: 'Share Tech Mono';">
                                 <span class="inner">Market Data</span>
                             </a>
-                            <button onclick="launchNotification('> ADDED_TO_CART')" class="btn yellow sm full" style="padding: 8px; font-family: 'Share Tech Mono';">
+                            <button onclick="showNotification('> ADDED_TO_CART', true)" class="btn yellow sm full" style="padding: 8px; font-family: 'Share Tech Mono';">
                                 <span class="inner">+ ADD TO CART</span>
                             </button>
                         </div>

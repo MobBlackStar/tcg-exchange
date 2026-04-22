@@ -11,33 +11,38 @@ use App\Http\Controllers\NexusController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\WishlistController;
 
+/*
+|--------------------------------------------------------------------------
+| Public Routes (Anyone can visit these)
+|--------------------------------------------------------------------------
+*/
 Route::get('/', function () {
-    return view('welcome');
+    return view('welcome'); // Sarah's cool landing page
 });
 
-// ==========================================
 // [SARAH DOMAIN: PUBLIC CATALOG & CARDS]
-// ==========================================
-Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-Route::get('/card/{id}', [CatalogController::class, 'show'])->name('card.show'); // Moved outside auth!
+Route::get('/catalog',[CatalogController::class, 'index'])->name('catalog');
+Route::get('/card/{id}',[CatalogController::class, 'show'])->name('card.show'); // Keeping Sarah's exact route name
 
-// ==========================================
-// [SARAH DOMAIN: WISHLIST]
-// Temporary bypass so Sarah can test without Login
-// ==========================================
+//[SARAH DOMAIN: WISHLIST] 
+// (Temporary bypass so Sarah can test without Login tonight)
 Route::get('/wishlist', [WishlistController::class, 'index'])->name('wishlist.index');
 Route::post('/wishlist/toggle',[WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
-
-// ==========================================
-// [LOCKED DOMAIN: MUST BE LOGGED IN]
-// ==========================================
+/*
+|--------------------------------------------------------------------------
+| Authenticated Routes (Must be logged in to visit these)
+|--------------------------------------------------------------------------
+*/
 Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
+    
+    //[RITEJ DOMAIN: PROFILE MANAGEMENT]
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
+
+    Route::get('/profile',[ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
@@ -68,4 +73,24 @@ Route::middleware('auth')->group(function () {
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
 });
 
+
+/*
+|--------------------------------------------------------------------------
+| [RITEJ DOMAIN] Admin Secure Routes (Must be logged in AND be an Admin)
+|--------------------------------------------------------------------------
+*/
+Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
+    
+    // This route proves to the jury that your RoleMiddleware works perfectly.
+    Route::get('/admin/dashboard', function () {
+        return "Welcome Pegasus. You are an Admin. The RoleMiddleware protected this page.";
+    })->name('admin.dashboard');
+
+});
+
+/*
+|--------------------------------------------------------------------------
+| Laravel Breeze Default Auth Routes (Login, Register, Password Reset)
+|--------------------------------------------------------------------------
+*/
 require __DIR__.'/auth.php';

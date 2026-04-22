@@ -123,6 +123,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 }
 
 /* ===== Layout primitives ===== */
+<<<<<<< HEAD
 /* THE WALL: Ensure the container allows full width */
 .container {
     width: 100% !important;
@@ -130,6 +131,13 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
     margin: 0 auto !important;
     padding: 0 20px !important;
     display: block !important;
+=======
+.container {
+    width: 100%;
+    max-width: 1300px; /* Gives the grid room to breathe */
+    margin: 0 auto;
+    padding: 0 20px;
+>>>>>>> 3584ad022a9f50f9cb242447068e60e9f6c4e623
 }
 .container-narrow{max-width:960px;margin:0 auto;padding:0 24px}
 .container-tight{max-width:768px;margin:0 auto;padding:0 24px}
@@ -312,6 +320,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 
 /* ===== Features grid ===== */
 .features-grid {
+<<<<<<< HEAD
     display: grid !important;
     /* This tells cards: "Be at least 320px, but grow to fill the rest of the row" */
     grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)) !important; 
@@ -319,15 +328,27 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
     width: 100% !important;
     justify-content: center !important;
     padding: 40px 0 !important;
+=======
+    display: grid;
+    /* This creates as many columns as possible, at least 300px wide each */
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
+    gap: 40px;
+    width: 100%;
+    justify-content: center;
+    align-items: start;
+>>>>>>> 3584ad022a9f50f9cb242447068e60e9f6c4e623
 }
 @media(min-width:768px){.features-grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.features-grid{grid-template-columns:repeat(3,1fr)}}
 
 /* THE SKELETON + THE UPGRADED PHYSICS */
 .tcard {
+<<<<<<< HEAD
   width: 100% !important;
     max-width: 350px !important;
     margin: 0 auto !important;
+=======
+>>>>>>> 3584ad022a9f50f9cb242447068e60e9f6c4e623
   position: relative;
   background: hsl(var(--card)/.8);
   backdrop-filter: blur(8px);
@@ -569,6 +590,7 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
     letter-spacing: 2px;
     font-weight: bold;
 }
+<<<<<<< HEAD
 /* 1. THE PINK CARD OVERLOAD */
 .tcard.wishlisted {
     border-color: var(--a4) !important;
@@ -593,3 +615,5 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
     border-color: var(--a1) !important; /* Turns Red when vibrating */
     box-shadow: 0 0 30px var(--a1) !important;
 }
+=======
+>>>>>>> 3584ad022a9f50f9cb242447068e60e9f6c4e623
