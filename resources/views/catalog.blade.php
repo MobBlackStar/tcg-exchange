@@ -44,12 +44,24 @@
                         <span class="ttl">&gt; {{ $card->passcode }}.bin</span>
                     </div>
                     <div class="body" style="display: flex; flex-direction: column; align-items: center; text-align: center; padding: 24px;">
-                        <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 200px; height: auto; border: 4px solid var(--ink-c); margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                        <div style="position: relative; display: inline-block;">
+                            <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 200px; height: auto; border: 4px solid var(--ink-c); margin-bottom: 20px; box-shadow: 0 0 15px rgba(0,0,0,0.5);">
+                            
+                            <!-- THE MARKET VALUE BADGE (OMEGA STYLE) -->
+                            <div style="position: absolute; top: -10px; right: -15px; background: var(--a5); color: var(--ink-c); padding: 6px 12px; font-family: 'Share Tech Mono', monospace; font-weight: bold; font-size: 1.1rem; border: 3px solid var(--ink-c); transform: skewX(-10deg); box-shadow: 4px 4px 0 var(--ink-c), 0 0 10px var(--a5);">
+                                @if($card->listings_min_price)
+                                    💎 {{ $card->listings_min_price }} DT
+                                @else
+                                    💎 N/A
+                                @endif
+                            </div>
+                        </div>
                         <h3 style="font-size: 1.1rem; min-height: 2.5rem; display: flex; align-items: center;">{{ $card->name }}</h3>
                         <p class="mono" style="font-size: 0.8rem; color: var(--a5); opacity: 0.8;">[{{ $card->type }}]</p>
                         
                         <div style="margin-top: 24px; width: 100%;">
-                            <a href="#" class="btn outline sm full"><span class="inner">Market Data</span></a>
+                            <a href="{{ route('cards.show', $card->id) }}" class="btn outline sm full"><span class="inner">Market Data</span></a>
+                            </a>
                         </div>
                     </div>
                 </div>

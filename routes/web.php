@@ -16,12 +16,12 @@ use App\Http\Controllers\CatalogController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    // We will eventually point this to Sarah's catalog or a cool landing page
-    return redirect()->route('catalog');
+    return view('welcome'); // Sarah's cool landing page
 });
 
 // [SARAH DOMAIN: CATALOG] - Public route so anyone can browse cards!
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
+Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show');
 
 
 /*

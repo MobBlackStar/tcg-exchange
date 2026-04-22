@@ -10,10 +10,13 @@ class CatalogController extends Controller
 {
     public function index(Request $request)
     {
-        // 1. Start the query (Load categories to make it faster)
-        $query = Card::with('category');
+        // 1. Start the query. 
+        // [GOD-TIER]: withMin() finds the lowest active price among all sellers for the Market Value badge!
+        $query = Card::with('category')->withMin(['listings' => function($q) {
+            $q->where('is_active', true)->where('quantity', '>', 0);
+        }], 'price');
 
-        // 2. SEARCH: Recherche par mot-clé
+        // 2. SEARCH: Fixed Eloquent OR Trap
         if ($request->filled('search')) {
             $query->where(function($q) use ($request) {
                 $q->where('name', 'like', '%' . $request->search . '%')
@@ -21,22 +24,28 @@ class CatalogController extends Controller
             });
         }
 
-        // 3. FILTER: Filtrage par catégorie (Constraint 3C)
+        // 3. FILTER
         if ($request->filled('category')) {
             $query->whereHas('category', function($q) use ($request) {
                 $q->where('name', $request->category);
             });
         }
 
-        // 4. SORT: Tri (Constraint 3C)
+        // 4. SORT
         $sort = $request->input('sort', 'name_asc');
         if ($sort === 'name_asc') $query->orderBy('name', 'asc');
         if ($sort === 'name_desc') $query->orderBy('name', 'desc');
 
-        // 5. PAGINATION: 12 cards per page (Dynamic navigation)
+        // 5. PAGINATION
         $cards = $query->paginate(12)->withQueryString();
         $categories = Category::all();
 
         return view('catalog', compact('cards', 'categories'));
+    }
+
+    public function show(Card $card)
+    {
+        $listings = $card->listings()->where('is_active', true)->with('seller')->get();
+        return view('cards.show', compact('card', 'listings'));
     }
 }

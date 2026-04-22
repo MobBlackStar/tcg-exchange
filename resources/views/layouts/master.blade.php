@@ -32,7 +32,7 @@
                 </a>
                 <nav class="nav-links">
                     <a href="/catalog">&gt; Catalog</a>
-                    <a href="#">&gt; My Cart</a>
+                    <a href="{{ route('cart.index') }}">&gt; My Cart</a>
                     
                     @auth
                         <a href="{{ url('/dashboard') }}">&gt; My Binder</a>
