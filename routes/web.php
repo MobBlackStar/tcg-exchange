@@ -32,9 +32,10 @@ Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.s
 Route::middleware('auth')->group(function () {
     
     // [RITEJ DOMAIN: PROFILE MANAGEMENT]
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    // Change the default dashboard route to redirect to the Catalog or Inventory
+Route::get('/dashboard', function () {
+    return redirect()->route('inventory.index'); // Redirects straight to your Binder!
+})->middleware(['auth', 'verified'])->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');

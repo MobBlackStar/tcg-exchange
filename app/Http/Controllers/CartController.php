@@ -18,36 +18,37 @@ class CartController extends Controller
     }
 
     public function add(Request $request)
-    {
-        $listing = Listing::with('card')->findOrFail($request->listing_id);
+{
+    $listing = Listing::with('card')->findOrFail($request->listing_id);
 
-        if ($listing->seller_id == auth()->id()) {
-            return response()->json(['success' => false, 'message' => 'You cannot buy your own card.']);
-        }
-
-        $cart = session()->get('cart', []);
-        if (isset($cart[$listing->id])) {
-            if ($cart[$listing->id]['quantity'] < $listing->quantity) {
-                $cart[$listing->id]['quantity']++;
-            } else {
-                return response()->json(['success' => false, 'message' => 'Not enough stock.']);
-            }
-        } else {
-            $cart[$listing->id] = [
-                "listing_id" => $listing->id,
-                "name" => $listing->card->name,
-                "condition" => $listing->condition,
-                "quantity" => 1,
-                "price" => $listing->price,
-                "image" => $listing->card->image_url,
-                "seller_id" => $listing->seller_id
-            ];
-        }
-
-        session()->put('cart', $cart);
-        // [JSON RESPONSE for Sarah's showNotification()]
-        return response()->json(['success' => true, 'message' => 'Card added to the Vault!']);
+    // 1. Logic Gate: Prevent self-purchase
+    if ($listing->seller_id == auth()->id()) {
+        return redirect()->back()->with('error', 'You cannot buy your own card!');
     }
+
+    $cart = session()->get('cart', []);
+
+    // 2. Logic Gate: Stock Check
+    if (isset($cart[$listing->id])) {
+        if ($cart[$listing->id]['quantity'] >= $listing->quantity) {
+            return redirect()->back()->with('error', 'Not enough stock available.');
+        }
+        $cart[$listing->id]['quantity']++;
+    } else {
+        $cart[$listing->id] = [
+            "listing_id" => $listing->id,
+            "name" => $listing->card->name,
+            "condition" => $listing->condition,
+            "quantity" => 1,
+            "price" => $listing->price,
+            "image" => $listing->card->image_url,
+            "seller_id" => $listing->seller_id
+        ];
+    }
+
+    session()->put('cart', $cart);
+    return redirect()->back()->with('success', 'Card added to the Vault!');
+}
 
     public function remove(Request $request)
     {

@@ -46,6 +46,21 @@
 
         <!-- THIS IS WHERE OTHER PAGES INJECT THEIR UNIQUE CONTENT -->
         <main style="min-height: 80vh; padding-top: 100px;">
+            <!-- THE DOPAMINE FEEDBACK -->
+<div class="container" style="margin-top: 20px;">
+    @if(session('success'))
+        <div class="tag yellow" style="width: 100%; justify-content: center; margin-bottom: 20px;">
+            <span class="label">&gt; {{ session('success') }}</span>
+        </div>
+    @endif
+
+    @if(session('error'))
+        <div class="tag cyan-on-dark" style="width: 100%; justify-content: center; margin-bottom: 20px; border-color: var(--a1);">
+            <span class="label" style="color: var(--a1);">&gt; {{ session('error') }}</span>
+        </div>
+    @endif
+</div>
+@yield('content')
             @yield('content')
         </main>
 
