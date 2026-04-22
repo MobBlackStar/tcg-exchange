@@ -45,4 +45,19 @@ class NexusController extends Controller
 
         return redirect()->route('cart.index')->with('success', $message);
     }
+    public function deckBuilder($deckId)
+{
+    $deck = Deck::with('cards')->findOrFail($deckId);
+    
+    // Get ALL cards the user owns (from completed orders)
+    $ownedCards = auth()->user()->collections()->with('card')->get();
+
+    // Grouping by name so you can count "How many Blue-Eyes do I have?"
+    $ownedCounts = $ownedCards->groupBy('card.name')->map->count();
+    
+    // Grouping by deck content
+    $deckCounts = $deck->cards->groupBy('name')->map->count();
+
+    return view('decks.builder', compact('deck', 'ownedCounts', 'deckCounts'));
 }
+    }

@@ -29,4 +29,11 @@ class User extends Authenticatable
             'password' => 'hashed',
         ];
     }
+    public function collections() {
+    return $this->belongsToMany(Card::class, 'collections')->withTimestamps();
+}
+
+public function decks() {
+    return $this->hasMany(Deck::class);
+}
 }
