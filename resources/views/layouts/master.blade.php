@@ -172,47 +172,45 @@
         }
 
         async function toggleWishlist(event, cardId) {
-            event.preventDefault();
-            const btn = event.currentTarget;
-            const wholeCard = btn.closest('.tcard');
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const wholeCard = btn.closest('.tcard');
 
-            try {
-                const response = await fetch('/wishlist/toggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
-                    body: JSON.stringify({ card_id: cardId })
-                });
-                
-                if (!response.ok) throw new Error('Unauthorized');
-                const data = await response.json();
+    // [GOD-TIER FIX] Grab the token directly from the meta tag
+    const liveToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
-                if (data.status === 'added') {
-                    btn.classList.add('active');
-                    if(wholeCard) wholeCard.classList.add('wishlisted');
-                    
-                    // [TECH LEAD FIX]: Brutally force the styles to trigger the animation
-                    btn.style.background = 'var(--a1)';
-                    btn.style.borderColor = 'var(--a1)';
-                    const svg = btn.querySelector('svg');
-                    if(svg) { svg.style.fill = 'white'; svg.style.color = 'white'; }
-                    
-                    showNotification("> DATA_SAVED_TO_HEART", true, true); 
-                } else {
-                    btn.classList.remove('active');
-                    if(wholeCard) wholeCard.classList.remove('wishlisted');
-                    
-                    // Revert styles
-                    btn.style.background = 'none';
-                    btn.style.borderColor = 'var(--a4)';
-                    const svg = btn.querySelector('svg');
-                    if(svg) { svg.style.fill = 'none'; svg.style.color = 'var(--a4)'; }
-                    
-                    showNotification("> REMOVED_FROM_ARCHIVE", false, false);
-                }
-            } catch (e) {
-                showNotification("> ERROR: LOGIN REQUIRED", true, true);
-            }
+    try {
+        const response = await fetch('/wishlist/toggle', {
+            method: 'POST',
+            headers: { 
+                'Content-Type': 'application/json', 
+                'X-CSRF-TOKEN': liveToken, // Use the live token
+                'Accept': 'application/json' 
+            },
+            body: JSON.stringify({ card_id: cardId })
+        });
+
+        if (response.status === 401) {
+            showNotification("> LOGIN_REQUIRED", true, true);
+            return;
         }
+
+        const data = await response.json();
+
+        if (data.status === 'added') {
+            btn.classList.add('active');
+            if(wholeCard) wholeCard.classList.add('wishlisted');
+            showNotification("ADD ME TO CARD!", true, true);
+        } else {
+            btn.classList.remove('active');
+            if(wholeCard) wholeCard.classList.remove('wishlisted');
+            showNotification("> SIGNAL_RELEASED", false, false);
+        }
+    } catch (e) {
+        console.error("Bouncer Error:", e);
+        showNotification("> ENCRYPTION_ERROR", true, true);
+    }
+}
 
         // --- 2. CHAT UI LOGIC ---
         function toggleChat() {

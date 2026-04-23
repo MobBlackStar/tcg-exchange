@@ -452,3 +452,24 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
     margin: 0 auto 20px auto; 
     display: block;
 }
+/* --- SARAH'S SIGNATURE UX (POST-MERGE RE-INJECTION) --- */
+.tcard.wishlisted {
+    border-color: var(--a4) !important;
+    box-shadow: 6px 6px 0 var(--ink-c), 12px 12px 0 var(--a4), 0 0 30px rgba(255, 0, 255, 0.6) !important;
+    transform: scale(1.02);
+}
+
+@keyframes vibrate {
+    0% { transform: translateX(-50%) translate(0); }
+    20% { transform: translateX(-50%) translate(-3px, 3px); }
+    40% { transform: translateX(-50%) translate(-3px, -3px); }
+    60% { transform: translateX(-50%) translate(3px, 3px); }
+    80% { transform: translateX(-50%) translate(3px, -3px); }
+    100% { transform: translateX(-50%) translate(0); }
+}
+
+.vibrate-alert { 
+    animation: vibrate 0.2s linear infinite !important; 
+    border-color: var(--a1) !important; 
+    box-shadow: 0 0 30px var(--a1) !important; 
+}
