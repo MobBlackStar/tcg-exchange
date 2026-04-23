@@ -74,12 +74,9 @@ Route::middleware('auth')->group(function () {
 |--------------------------------------------------------------------------
 */
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
-    
-    // This route proves to the jury that your RoleMiddleware works perfectly.
     Route::get('/admin/dashboard', function () {
-        return "Welcome Pegasus. You are an Admin. The RoleMiddleware protected this page.";
+        return view('admin.dashboard');
     })->name('admin.dashboard');
-
 });
 
 
