@@ -3,95 +3,95 @@
 namespace App\Services;
 
 use App\Models\Card;
-use App\Models\Listing;
+use App\Models\Deck;
 use Illuminate\Support\Facades\Session;
 
 class YdkParserService
 {
     /**
-     * Parses a .ydk file and dynamically builds a multi-vendor cart.
+     * Parses ANY format (Base64, YDK, Text) and directly injects it into a User's Deck.
      */
-    public function buildCartFromYdk($fileContents)
+    public function importToDeck(Deck $deck, $rawContent)
     {
-        // 1. Break the file into lines
-        $lines = explode("\n", str_replace("\r", "", $fileContents));
-        
-        $requiredCards =[];
+        $rawContent = trim($rawContent);
+        $cardsToAdd =[]; // ['passcode' => ['quantity' => X, 'location' => 'main/extra/side']]
 
-        // 2. Extract only the numeric passcodes and count how many of each we need
-        foreach ($lines as $line) {
-            $line = trim($line);
-            // If it's a number, it's a card ID
-            if (is_numeric($line)) {
-                if (!isset($requiredCards[$line])) {
-                    $requiredCards[$line] = 0;
-                }
-                $requiredCards[$line]++; // Example: Needs 3x Blue-Eyes (Passcode: 89631139)
+        // FORMAT 1: BASE64 OMEGA CODE (Usually a single long string with no spaces)
+        if (!str_contains($rawContent, "\n") && !str_contains($rawContent, " ") && strlen($rawContent) > 50) {
+            $decoded = base64_decode($rawContent);
+            if ($decoded && str_contains($decoded, '#main')) {
+                $rawContent = $decoded; // Overwrite with decoded YDK and let Format 2 handle it
             }
         }
 
-        $cart = session()->get('cart',[]);
-        $foundCount = 0;
-        $missingCount = 0;
+        // FORMAT 2: STANDARD YDK (#main, #extra, !side followed by passcodes)
+        if (str_contains($rawContent, '#main')) {
+            $lines = explode("\n", str_replace("\r", "", $rawContent));
+            $currentLocation = 'main';
 
-        // 3. The Algorithm: Find the cheapest listings for each required card
-        foreach ($requiredCards as $passcode => $quantityNeeded) {
-            // Find the actual card in our global DB
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line) || str_starts_with($line, '#Created')) continue;
+                
+                if ($line === '#main') { $currentLocation = 'main'; continue; }
+                if ($line === '#extra') { $currentLocation = 'extra'; continue; }
+                if ($line === '!side') { $currentLocation = 'side'; continue; }
+
+                if (is_numeric($line)) {
+                    if (!isset($cardsToAdd[$line])) {
+                        $cardsToAdd[$line] =['quantity' => 0, 'location' => $currentLocation];
+                    }
+                    $cardsToAdd[$line]['quantity']++;
+                }
+            }
+        } 
+        // FORMAT 3: TEXT RECIPE (e.g., "2 Spirit of Yubel" or "Spell")
+        else if (str_contains($rawContent, 'Monster') || str_contains(strtolower($rawContent), 'extra')) {
+            $lines = explode("\n", str_replace("\r", "", $rawContent));
+            $currentLocation = 'main';
+
+            foreach ($lines as $line) {
+                $line = trim($line);
+                if (empty($line)) continue;
+
+                $lowerLine = strtolower($line);
+                if ($lowerLine === 'monster' || $lowerLine === 'spell' || $lowerLine === 'trap') { $currentLocation = 'main'; continue; }
+                if ($lowerLine === 'extra') { $currentLocation = 'extra'; continue; }
+                if ($lowerLine === 'side') { $currentLocation = 'side'; continue; }
+
+                // Regex to find "Quantity Name" (e.g., "3 Ash Blossom & Joyous Spring")
+                if (preg_match('/^(\d+)\x20+(.+)$/', $line, $matches)) {
+                    $qty = (int)$matches[1];
+                    $name = $matches[2];
+
+                    // Find the card by exact name
+                    $card = Card::where('name', $name)->first();
+                    if ($card) {
+                        $cardsToAdd[$card->passcode] =['quantity' => $qty, 'location' => $currentLocation];
+                    }
+                }
+            }
+        }
+
+        // NOW: INJECT INTO THE DATABASE
+        $cardsAdded = 0;
+        foreach ($cardsToAdd as $passcode => $data) {
             $card = Card::where('passcode', $passcode)->first();
+            if ($card) {
+                $existing = $deck->cards()->where('card_id', $card->id)->where('location', $data['location'])->first();
+                
+                // Enforce max 3 copies
+                $finalQty = $existing ? min(3, $existing->pivot->quantity + $data['quantity']) : min(3, $data['quantity']);
 
-            if (!$card) {
-                $missingCount += $quantityNeeded;
-                continue; // Card doesn't exist in our DB
-            }
-
-            // Get active listings for this exact card, sorted by cheapest price
-            $listings = Listing::with('card')
-                ->where('card_id', $card->id)
-                ->where('is_active', true)
-                ->where('quantity', '>', 0)
-                ->orderBy('price', 'asc')
-                ->get();
-
-            $quantityFulfilled = 0;
-
-            // Go through the cheapest listings and grab them until we have the quantity we need
-            foreach ($listings as $listing) {
-                if ($quantityFulfilled >= $quantityNeeded) break;
-
-                // How many can we take from this specific seller?
-                $neededFromThisSeller = min($quantityNeeded - $quantityFulfilled, $listing->quantity);
-
-                // Inject exactly into Moataz's Cart Format
-                if (isset($cart[$listing->id])) {
-                    $cart[$listing->id]['quantity'] += $neededFromThisSeller;
+                if ($existing) {
+                    $deck->cards()->updateExistingPivot($card->id, ['quantity' => $finalQty]);
                 } else {
-                    $cart[$listing->id] =[
-                        "listing_id" => $listing->id,
-                        "name" => $card->name,
-                        "condition" => $listing->condition,
-                        "quantity" => $neededFromThisSeller,
-                        "price" => $listing->price,
-                        "image" => $card->image_url,
-                        "seller_id" => $listing->seller_id
-                    ];
+                    $deck->cards()->attach($card->id, ['quantity' => $finalQty, 'location' => $data['location']]);
                 }
-
-                $quantityFulfilled += $neededFromThisSeller;
-                $foundCount += $neededFromThisSeller;
-            }
-
-            // If we couldn't find enough stock across all sellers, mark the remainder as missing
-            if ($quantityFulfilled < $quantityNeeded) {
-                $missingCount += ($quantityNeeded - $quantityFulfilled);
+                $cardsAdded++;
             }
         }
 
-        // 4. Save the dynamically built cart back to the session
-        session()->put('cart', $cart);
-
-        return[
-            'found' => $foundCount,
-            'missing' => $missingCount
-        ];
+        return $cardsAdded;
     }
 }

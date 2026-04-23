@@ -61,14 +61,19 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('/chat/fetch/{receiver_id}',[ChatController::class, 'fetchMessages'])->name('chat.fetch');
     Route::get('/chat/unread',[ChatController::class, 'checkUnread'])->name('chat.unread'); 
 
+   // [MOATAZ DOMAIN: DECK BUILDER]
     Route::get('/decks',[DeckController::class, 'index'])->name('decks.index');
-    Route::post('/deck/create',[DeckController::class, 'store'])->name('deck.store');
-    Route::get('/deck/{id}/builder', [DeckController::class, 'builder'])->name('deck.builder');
-    Route::post('/deck/{id}/add', [DeckController::class, 'addCard'])->name('deck.addCard');
-    Route::delete('/deck/{deckId}/remove/{cardId}',[DeckController::class, 'removeCard'])->name('deck.removeCard');
+    Route::post('/deck/create', [DeckController::class, 'store'])->name('deck.store');
+    Route::get('/deck/{id}/builder',[DeckController::class, 'builder'])->name('deck.builder');
+    Route::post('/deck/{id}/add',[DeckController::class, 'addCard'])->name('deck.addCard');
+    Route::delete('/deck/{deckId}/remove/{cardId}', [DeckController::class, 'removeCard'])->name('deck.removeCard');
     Route::post('/deck/{id}/preview', [DeckController::class, 'setPreview'])->name('deck.setPreview');
-    Route::get('/deck/{id}/export',[\App\Http\Controllers\DeckController::class, 'exportYdk'])->name('deck.export');
+    
+    // [PROJECT OMEGA]
+    Route::get('/deck/{id}/export', [\App\Http\Controllers\DeckController::class, 'exportYdk'])->name('deck.export');
     Route::post('/deck/{id}/import',[\App\Http\Controllers\DeckController::class, 'importYdk'])->name('deck.import');
+    Route::post('/deck/{id}/import-text',[\App\Http\Controllers\DeckController::class, 'importText'])->name('deck.importText'); // <-- NEW
+    
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
 });
 
