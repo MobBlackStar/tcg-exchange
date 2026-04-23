@@ -18,12 +18,12 @@ Route::get('/', function () { return view('welcome'); });
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show'); 
 
-// [TECH LEAD FIX]: REAL-TIME API SEARCH FOR THE INVENTORY!
+// [TECH LEAD FIX]: REAL-TIME API SEARCH FOR THE INVENTORY (Now with images!)
 Route::get('/api/cards/search', function (Request $request) {
     if (!$request->filled('q')) return response()->json([]);
-    return Card::where('name', 'like', '%' . $request->q . '%')->limit(20)->get(['id', 'name', 'passcode']);
+    // Added 'image_url' to the select statement
+    return Card::where('name', 'like', '%' . $request->q . '%')->limit(20)->get(['id', 'name', 'passcode', 'image_url']);
 })->name('api.cards.search');
-
 
 // --- USERS MUST BE LOGGED IN (But maybe not verified yet, so they can access their profile to resend the email) ---
 Route::middleware('auth')->group(function () {
@@ -72,9 +72,34 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
 });
 
-// --- ADMIN ROUTES ---
+/*
+|--------------------------------------------------------------------------
+| [RITEJ DOMAIN] Admin Secure Routes (Must be logged in AND be an Admin)
+|--------------------------------------------------------------------------
+*/
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
-    Route::get('/admin/dashboard', function () { return view('admin.dashboard'); })->name('admin.dashboard');
+    
+    // 1. The Admin Command Center
+    Route::get('/admin/dashboard', function () {
+        $users = \App\Models\User::all();
+        $orders = \App\Models\Order::with('buyer')->latest()->get();
+        return view('admin.dashboard', compact('users', 'orders'));
+    })->name('admin.dashboard');
+
+    // 2. [TECH LEAD FIX]: Force Verify Users (Bypasses Email!)
+    Route::post('/admin/verify/{id}', function($id) {
+        $user = \App\Models\User::findOrFail($id);
+        $user->markEmailAsVerified();
+        return back()->with('success', "User {$user->name} has been manually verified.");
+    })->name('admin.verify');
+
+    // 3. Delete Users
+    Route::delete('/admin/user/{id}', function($id) {
+        \App\Models\User::findOrFail($id)->delete();
+        return back()->with('success', 'User purged from the database.');
+    })->name('admin.delete_user');
 });
+
+require __DIR__.'/auth.php';
 
 require __DIR__.'/auth.php';

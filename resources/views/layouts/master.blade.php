@@ -50,16 +50,20 @@
                 </a>
                 <nav class="nav-links">
                     <a href="{{ route('catalog') }}">&gt; CATALOG</a>
+                    <a href="{{ route('chat.inbox') }}">&gt; INBOX</a>
+                    <a href="{{ route('wishlist.index') }}">&gt; FAVORITES</a>
+                    <a href="{{ route('cart.index') }}">&gt; MY CART</a>
                     
                     @auth
-                        <a href="{{ route('chat.inbox') }}">&gt; INBOX</a>
-                        <a href="{{ route('wishlist.index') }}">&gt; FAVORITES</a>
-                        <a href="{{ route('cart.index') }}">&gt; MY CART</a>
                         <a href="{{ route('inventory.index') }}">&gt; MY BINDER</a>
                         <a href="{{ route('decks.index') }}">&gt; MY DECKS</a>
                         <a href="{{ url('/dashboard') }}">&gt; DASHBOARD</a>
+                        
+                        <!-- [TECH LEAD FIX]: The Secret Admin Door -->
+                        @if(auth()->user()->role === 'admin')
+                            <a href="{{ route('admin.dashboard') }}" style="color: var(--a1); font-weight: bold; text-shadow: 0 0 5px var(--a1);">&gt; OVERSEER</a>
+                        @endif
                     @else
-                        <a href="{{ route('cart.index') }}">&gt; MY CART</a>
                         <a href="{{ route('login') }}">&gt; LOGIN</a>
                         <a href="{{ route('register') }}">&gt; REGISTER</a>
                     @endauth
