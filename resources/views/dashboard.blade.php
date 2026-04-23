@@ -1,22 +1,36 @@
 @extends('layouts.master')
 
 @section('content')
-<section class="section">
-    <div class="container-tight">
-        <h2 class="h2 text-stack-sm">Duelist <span class="accent-m">Profile.</span></h2>
+<div class="container-narrow" style="min-height: 70vh; padding-top: 60px;">
+    
+    <div style="margin-bottom: 40px;">
+        <span class="tag cyan-on-dark" style="margin-bottom: 15px;"><span class="label">&gt; SYSTEM.DUELIST_LINK</span></span>
+        <h2 class="h2 text-stack-sm" style="font-size: 3rem;">DUELIST <span class="accent-c">TERMINAL</span></h2>
+    </div>
 
-        <div class="tcard" style="padding: 40px; margin-top: 40px; background: hsl(var(--card)/.9); text-align: center;">
-            <p style="font-family: 'Share Tech Mono'; color: var(--a5); font-size: 1.2rem;">
-                &gt; WELCOME TO THE VOID, {{ strtoupper(auth()->user()->name) }}
-            </p>
-            <p style="color: var(--chrome-c); opacity: 0.8; margin-top: 10px;">
-                Role: {{ strtoupper(auth()->user()->role) }} | Reputation: {{ auth()->user()->reputation_score }} / 5.00
-            </p>
-
-            <div style="margin-top: 40px; display: flex; flex-direction: column; gap: 20px; align-items: center;">
-                <a href="{{ route('inventory.index') }}" class="btn magenta lg"><span class="inner">Manage Binder</span></a>
-                <a href="{{ route('decks.index') }}" class="btn yellow md"><span class="inner">Deck Builder</span></a>
-                <a href="{{ route('orders.index') }}" class="btn cyan md"><span class="inner">Order History</span></a>
+    <div class="features-grid">
+        <!-- 1. THE USER'S ID CARD -->
+        <div class="tcard shadow-brick-cyan">
+            <div class="titlebar">
+                <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                <span class="ttl">&gt; user_profile.dat</span>
+            </div>
+            <div class="corner tri bgc-5"></div>
+            <div class="body" style="padding: 30px;">
+                <h3 style="color: var(--chrome-c); margin-bottom: 10px;">{{ strtoupper(Auth::user()->name) }}</h3>
+                <p style="color: var(--a5); font-family: 'Share Tech Mono', monospace; font-size: 1.1rem; margin-bottom: 5px;">
+                    &gt; CALLSIGN: {{ Auth::user()->name }}
+                </p>
+                <p style="color: hsl(var(--chrome)/.7); font-family: 'Share Tech Mono', monospace; margin-bottom: 5px;">
+                    &gt; NETWORK_ID: {{ Auth::user()->email }}
+                </p>
+                <p style="color: hsl(var(--chrome)/.7); font-family: 'Share Tech Mono', monospace; margin-bottom: 25px;">
+                    &gt; CLEARANCE: {{ strtoupper(Auth::user()->role) }}
+                </p>
+                
+                <a href="{{ route('profile.edit') }}" class="btn cyan sm full">
+                    <span class="inner">UPDATE SECURE DATA</span>
+                </a>
             </div>
             
             <form method="POST" action="{{ route('logout') }}" style="margin-top: 40px;">
@@ -24,6 +38,40 @@
                 <button type="submit" style="color: var(--a1); font-family: 'Share Tech Mono'; cursor: pointer; text-decoration: underline;">[ LOGOUT ]</button>
             </form>
         </div>
+
+        <!-- 2. QUICK NAVIGATION MODULES -->
+        <div style="display: flex; flex-direction: column; gap: 30px;">
+            
+            <!-- Link to Moataz's Inventory -->
+            <div class="tcard rot-r shadow-brick-yellow">
+                <div class="titlebar">
+                    <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                    <span class="ttl">&gt; active_listings.exe</span>
+                </div>
+                <div class="corner square bgc-3"></div>
+                <div class="body" style="padding: 20px;">
+                    <h3 style="font-size: 1.5rem; color: var(--a3);">MY BINDER</h3>
+                    <p>Manage your cards for sale.</p>
+                    <a href="{{ route('inventory.index') }}" class="btn yellow sm" style="margin-top: 15px;"><span class="inner">OPEN BINDER</span></a>
+                </div>
+            </div>
+
+            <!-- Link to Moataz's Order History -->
+            <div class="tcard rot-l shadow-brick-magenta">
+                <div class="titlebar">
+                    <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                    <span class="ttl">&gt; transaction_log.bin</span>
+                </div>
+                <div class="corner circle bgc-4"></div>
+                <div class="body" style="padding: 20px;">
+                    <h3 style="font-size: 1.5rem; color: var(--a4);">ORDER HISTORY</h3>
+                    <p>Track your incoming and outgoing shipments.</p>
+                    <a href="{{ route('orders.index') }}" class="btn magenta sm" style="margin-top: 15px;"><span class="inner">VIEW LOGS</span></a>
+                </div>
+            </div>
+
+        </div>
     </div>
-</section>
+
+</div>
 @endsection

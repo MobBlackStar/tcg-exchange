@@ -1,29 +1,58 @@
-<x-app-layout>
-    <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Profile') }}
-        </h2>
-    </x-slot>
+@extends('layouts.master')
 
-    <div class="py-12">
-        <div class="max-w-7xl mx-auto sm:px-6 lg:px-8 space-y-6">
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+@section('content')
+<div class="container-narrow" style="padding-top: 60px; padding-bottom: 60px;">
+    
+    <div style="margin-bottom: 40px;">
+        <span class="tag cyan-on-dark" style="margin-bottom: 15px;"><span class="label">&gt; SECURE_CONNECTION</span></span>
+        <h2 class="h2 text-stack-sm" style="font-size: 3rem;">DATA <span class="accent-m">FORGE</span></h2>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 40px;">
+
+        <!-- PROFILE INFORMATION FORM -->
+        <div class="tcard shadow-brick-cyan">
+            <div class="titlebar">
+                <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                <span class="ttl">&gt; update_profile.exe</span>
+            </div>
+            <div class="corner square bgc-5"></div>
+            <div class="body" style="padding: 30px; background: var(--ink-c);">
+                <!-- We include the default Breeze form, but force text to be white/neon inside it -->
+                <div style="color: var(--chrome-c);">
                     @include('profile.partials.update-profile-information-form')
                 </div>
             </div>
+        </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+        <!-- PASSWORD UPDATE FORM -->
+        <div class="tcard shadow-brick-magenta">
+            <div class="titlebar">
+                <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                <span class="ttl">&gt; change_cipher.sys</span>
+            </div>
+            <div class="corner circle bgc-4"></div>
+            <div class="body" style="padding: 30px; background: var(--ink-c);">
+                <div style="color: var(--chrome-c);">
                     @include('profile.partials.update-password-form')
                 </div>
             </div>
+        </div>
 
-            <div class="p-4 sm:p-8 bg-white shadow sm:rounded-lg">
-                <div class="max-w-xl">
+        <!-- DELETE ACCOUNT FORM -->
+        <div class="tcard shadow-brick-red">
+            <div class="titlebar">
+                <span class="dots"><span class="d1"></span><span class="d2"></span><span class="d3"></span></span>
+                <span class="ttl">&gt; self_destruct.bin</span>
+            </div>
+            <div class="corner tri bgc-1"></div>
+            <div class="body" style="padding: 30px; background: var(--ink-c);">
+                <div style="color: var(--chrome-c);">
                     @include('profile.partials.delete-user-form')
                 </div>
             </div>
         </div>
+
     </div>
-</x-app-layout>
+</div>
+@endsection

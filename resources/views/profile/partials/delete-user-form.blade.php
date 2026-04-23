@@ -1,54 +1,54 @@
 <section class="space-y-6">
     <header>
-        <h2 class="text-lg font-medium text-gray-900">
+        <h2 class="text-lg font-medium" style="color: var(--a1); font-size: 1.5rem; font-family: 'Orbitron', sans-serif;">
             {{ __('Delete Account') }}
         </h2>
-
-        <p class="mt-1 text-sm text-gray-600">
-            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Before deleting your account, please download any data or information that you wish to retain.') }}
+        <p class="mt-1 text-sm" style="color: var(--chrome-c); font-family: 'Share Tech Mono', monospace; font-size: 1rem; margin-bottom: 20px;">
+            {{ __('Once your account is deleted, all of its resources and data will be permanently deleted.') }}
         </p>
     </header>
 
-    <x-danger-button
+    <button class="btn outline sm" style="border-color: var(--a1); color: var(--a1);"
         x-data=""
-        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')"
-    >{{ __('Delete Account') }}</x-danger-button>
+        x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')">
+        <span class="inner">{{ __('INITIATE SELF DESTRUCT') }}</span>
+    </button>
 
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" class="p-6">
+        <form method="post" action="{{ route('profile.destroy') }}" style="padding: 30px; background: var(--bg); border: 4px solid var(--a1); box-shadow: 0 0 30px rgba(255,0,0,0.5);">
             @csrf
             @method('delete')
 
-            <h2 class="text-lg font-medium text-gray-900">
+            <h2 class="text-lg font-medium" style="color: var(--a1); font-size: 1.5rem; font-family: 'Orbitron', sans-serif;">
                 {{ __('Are you sure you want to delete your account?') }}
             </h2>
 
-            <p class="mt-1 text-sm text-gray-600">
-                {{ __('Once your account is deleted, all of its resources and data will be permanently deleted. Please enter your password to confirm you would like to permanently delete your account.') }}
+            <p class="mt-1 text-sm" style="color: var(--chrome-c); font-family: 'Share Tech Mono', monospace; font-size: 1rem; margin-bottom: 20px; margin-top: 10px;">
+                {{ __('Please enter your password to confirm you would like to permanently delete your account.') }}
             </p>
 
-            <div class="mt-6">
+            <div style="margin-top: 20px;">
                 <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
 
                 <x-text-input
                     id="password"
                     name="password"
                     type="password"
-                    class="mt-1 block w-3/4"
+                    style="width: 100%; padding: 12px; background: var(--ink-c); color: var(--chrome-c); border: 2px solid var(--a1); font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;"
                     placeholder="{{ __('Password') }}"
                 />
 
-                <x-input-error :messages="$errors->userDeletion->get('password')" class="mt-2" />
+                <x-input-error :messages="$errors->userDeletion->get('password')" style="color: var(--a1); margin-top: 10px;" />
             </div>
 
-            <div class="mt-6 flex justify-end">
-                <x-secondary-button x-on:click="$dispatch('close')">
-                    {{ __('Cancel') }}
-                </x-secondary-button>
+            <div style="margin-top: 25px; display: flex; justify-content: flex-end; gap: 15px;">
+                <button type="button" class="btn outline sm" x-on:click="$dispatch('close')">
+                    <span class="inner">{{ __('CANCEL') }}</span>
+                </button>
 
-                <x-danger-button class="ms-3">
-                    {{ __('Delete Account') }}
-                </x-danger-button>
+                <button type="submit" class="btn red sm">
+                    <span class="inner">{{ __('CONFIRM DELETION') }}</span>
+                </button>
             </div>
         </form>
     </x-modal>
