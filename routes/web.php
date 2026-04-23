@@ -21,7 +21,7 @@ Route::get('/', function () {
 
 // [SARAH DOMAIN: CATALOG] - Public route so anyone can browse cards!
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show');
+Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show');                                                                            
 
 
 /*
@@ -32,10 +32,9 @@ Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.s
 Route::middleware('auth')->group(function () {
     
     // [RITEJ DOMAIN: PROFILE MANAGEMENT]
-    // Change the default dashboard route to redirect to the Catalog or Inventory
-Route::get('/dashboard', function () {
-    return redirect()->route('inventory.index'); // Redirects straight to your Binder!
-})->middleware(['auth', 'verified'])->name('dashboard');
+    Route::get('/dashboard', function () {
+        return view('dashboard');
+    })->name('dashboard');
 
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
@@ -66,19 +65,18 @@ Route::get('/dashboard', function () {
 
     // [TECH LEAD DOMAIN: THE NEXUS]
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
-   // [MOATAZ DOMAIN: DECK BUILDER]
-Route::get('/decks', [App\Http\Controllers\DeckController::class, 'index'])->name('decks.index');
-Route::get('/deck/{id}/builder', [App\Http\Controllers\DeckController::class, 'builder'])->name('deck.builder');
-Route::post('/deck/create', [App\Http\Controllers\DeckController::class, 'store'])->name('deck.store');
+    
+    //[MOATAZ DOMAIN: DECK BUILDER]
+    Route::get('/decks',[\App\Http\Controllers\DeckController::class, 'index'])->name('decks.index');
+    Route::post('/deck/create',[\App\Http\Controllers\DeckController::class, 'store'])->name('deck.store');
+    Route::get('/deck/{id}/builder', [\App\Http\Controllers\DeckController::class, 'builder'])->name('deck.builder');
+    Route::post('/deck/{id}/add',[\App\Http\Controllers\DeckController::class, 'addCard'])->name('deck.addCard');
+    Route::delete('/deck/{deckId}/remove/{cardId}', [\App\Http\Controllers\DeckController::class, 'removeCard'])->name('deck.removeCard');
+    Route::post('/deck/{id}/preview',[\App\Http\Controllers\DeckController::class, 'setPreview'])->name('deck.setPreview');
 
-// THIS IS THE LINE YOU WERE MISSING:
-Route::post('/deck/{id}/add', [App\Http\Controllers\DeckController::class, 'addCard'])->name('deck.addCard');
-// Remove card from deck
-Route::delete('/deck/{deckId}/remove/{cardId}', [App\Http\Controllers\DeckController::class, 'removeCard'])->name('deck.removeCard');
-// Set Preview
-Route::post('/deck/{id}/preview', [App\Http\Controllers\DeckController::class, 'setPreview'])->name('deck.setPreview');
+    // [SARAH DOMAIN: WISHLIST]
+    Route::post('/wishlist/toggle',[\App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
 });
-
 
 
 /*
