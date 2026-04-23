@@ -36,4 +36,13 @@ class User extends Authenticatable
 public function decks() {
     return $this->hasMany(Deck::class);
 }
+// The user's saved favorites
+    public function wishlist() {
+        return $this->belongsToMany(Card::class, 'wishlist')->withTimestamps();
+    }
+
+    // The decks the user has built
+    public function decks() {
+        return $this->hasMany(Deck::class);
+    }
 }
