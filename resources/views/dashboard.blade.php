@@ -33,9 +33,34 @@
                 </a>
             </div>
             
-            <form method="POST" action="{{ route('logout') }}" style="margin-top: 40px;">
+            <form method="POST" action="{{ route('logout') }}" style="margin-top: 20px; display: flex; justify-content: center;">
                 @csrf
-                <button type="submit" style="color: var(--a1); font-family: 'Share Tech Mono'; cursor: pointer; text-decoration: underline;">[ LOGOUT ]</button>
+                <button type="submit" class="btn sm" style="
+                    background: linear-gradient(90deg, #2a0000 80%, #ff3b3b 100%);
+                    color: #ff3b3b;
+                    border: 2.5px solid #ff3b3b;
+                    min-width: 120px;
+                    font-size: 0.95rem;
+                    font-family: 'Share Tech Mono', monospace;
+                    font-weight: bold;
+                    letter-spacing: 1px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    gap: 0.5em;
+                    position: relative;
+                    box-shadow:
+                        0 0 16px 4px #ff3b3b,
+                        0 0 32px 8px #ff3b3b88,
+                        0 4px 0 0 #000,
+                        0 8px 24px 0 #ff3b3b44;
+                    text-shadow: 0 0 8px #ff3b3b, 0 0 2px #fff;
+                    border-radius: 8px;
+                    transition: box-shadow 0.2s, background 0.2s, color 0.2s;
+                ">
+                    <span class="inner" style="padding: 0 2px;">LOGOUT</span>
+                    <span aria-label="sad face" style="font-size:1.1em; filter: drop-shadow(0 0 6px #ff3b3b);">😢</span>
+                </button>
             </form>
         </div>
 

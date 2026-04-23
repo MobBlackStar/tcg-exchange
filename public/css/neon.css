@@ -452,3 +452,58 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
     margin: 0 auto 20px auto; 
     display: block;
 }
+/* --- SARAH'S SIGNATURE UX (POST-MERGE RE-INJECTION) --- */
+.tcard.wishlisted {
+    border-color: var(--a4) !important;
+    box-shadow: 6px 6px 0 var(--ink-c), 12px 12px 0 var(--a4), 0 0 30px rgba(255, 0, 255, 0.6) !important;
+    transform: scale(1.02);
+}
+
+/* 1. The Glitch Alert */
+@keyframes vibrate {
+    0%, 100% { transform: translateX(-50%) translate(0); }
+    20% { transform: translateX(-50%) translate(-3px, 3px); }
+    40% { transform: translateX(-50%) translate(-3px, -3px); }
+    60% { transform: translateX(-50%) translate(3px, 3px); }
+    80% { transform: translateX(-50%) translate(3px, -3px); }
+}
+
+.vibrate-alert { 
+    animation: vibrate 0.2s linear infinite !important; 
+    border-color: var(--a1) !important; 
+    box-shadow: 0 0 30px var(--a1) !important; 
+}
+
+/* 2. The Heart Button Base */
+.btn-wishlist {
+    background: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+    width: 30px;
+    height: 30px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s cubic-bezier(0.19, 1, 0.22, 1);
+    padding: 0;
+    margin: 0;
+}
+
+.btn-wishlist:hover {
+    transform: scale(1.2); /* Clean zoom, NO weird rotation */
+}
+
+/* 3. The "Rose Bebe & Red of Love" Burst Animation */
+@keyframes heartBurst {
+    0% { transform: scale(1); filter: drop-shadow(0 0 0 rgba(255, 182, 193, 0)); }
+    50% { transform: scale(1.5); filter: drop-shadow(0 0 20px #FFB6C1); } /* Rose Bebe Glow */
+    100% { transform: scale(1.1); filter: drop-shadow(0 0 10px #E60049); } /* Deep Red Glow */
+}
+
+/* When active, trigger the burst and inject the colors */
+.btn-wishlist.active svg {
+    animation: heartBurst 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275) forwards;
+    fill: #E60049 !important;  /* Deep Red of Love */
+    color: #FFB6C1 !important; /* Rose Bebe Stroke */
+}

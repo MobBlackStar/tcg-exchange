@@ -176,32 +176,59 @@
             setTimeout(() => { toast.classList.remove('active'); }, 3000);
         }
 
+        // --- 1B. WISHLIST AJAX & ANIMATION (Sarah's True Vision) ---
         async function toggleWishlist(event, cardId) {
             event.preventDefault();
             const btn = event.currentTarget;
-            const wholeCard = btn.closest('.tcard');
+            const wholeCard = btn.closest('.tcard'); // Targets the card container
+            
+            //[GOD-TIER FIX] Grab the token directly from the meta tag
+            const liveToken = document.querySelector('meta[name="csrf-token"]').getAttribute('content');
 
             try {
-                const response = await fetch('{{ route('wishlist.toggle') }}', {
+                const response = await fetch('/wishlist/toggle', {
                     method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+                    headers: { 
+                        'Content-Type': 'application/json', 
+                        'X-CSRF-TOKEN': liveToken,
+                        'Accept': 'application/json' 
+                    },
                     body: JSON.stringify({ card_id: cardId })
                 });
                 
-                if (!response.ok) throw new Error('Unauthorized');
+                if (response.status === 401 || response.status === 419) {
+                    showNotification("> LOGIN_REQUIRED", true, true);
+                    return;
+                }
+                
                 const data = await response.json();
-
+                
                 if (data.status === 'added') {
+                    // 1. Activate the Heart CSS
                     btn.classList.add('active');
-                    if(wholeCard) wholeCard.classList.add('wishlisted');
-                    showNotification("> DATA_SAVED_TO_HEART", true, true); 
+                    
+                    if(wholeCard) {
+                        // 2. Add the permanent Pink Glow
+                        wholeCard.classList.add('wishlisted');
+                        // 3. SHAKE THE ENTIRE CARD!
+                        wholeCard.classList.add('shake-card');
+                        // Remove the shake class after 300ms so it can shake again later
+                        setTimeout(() => wholeCard.classList.remove('shake-card'), 300);
+                    }
+                    
+                    showNotification("> DATA_SAVED_TO_HEART", true, true);
                 } else {
+                    // Remove styling
                     btn.classList.remove('active');
-                    if(wholeCard) wholeCard.classList.remove('wishlisted');
-                    showNotification("> REMOVED_FROM_ARCHIVE", false, false);
+                    if(wholeCard) {
+                        wholeCard.classList.remove('wishlisted');
+                        wholeCard.classList.remove('shake-card');
+                    }
+                    showNotification("> SIGNAL_RELEASED", false, false);
                 }
             } catch (e) {
-                showNotification("> ERROR: LOGIN REQUIRED", true, true);
+                console.error("Bouncer Error:", e);
+                showNotification("> ENCRYPTION_ERROR", true, true);
             }
         }
 

@@ -65,7 +65,9 @@
                         
                         @auth
                         <button class="btn-wishlist {{ $isWishlisted ? 'active' : '' }}" onclick="toggleWishlist(event, {{ $card->id }})" title="Toggle Wishlist" style="background: none; border: none; cursor: pointer; transition: all 0.3s; color: {{ $isWishlisted ? 'var(--a1)' : 'var(--chrome-c)' }};">
-                            <svg style="width: 18px; height: 18px; fill: {{ $isWishlisted ? 'var(--a1)' : 'none' }};" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>
+                            <svg style="width: 18px; height: 18px; fill: {{ $isWishlisted ? 'var(--a1)' : 'none' }}; transition: fill 0.2s, color 0.2s;" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2.5">
+                                <path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l8.84-8.84 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path>
+                            </svg>
                         </button>
                         @endauth
                     </div>
