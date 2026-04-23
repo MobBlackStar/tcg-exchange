@@ -37,8 +37,14 @@ public function decks() {
     return $this->hasMany(Deck::class);
 }
 // The user's saved favorites
-    public function wishlist() {
-        return $this->belongsToMany(Card::class, 'wishlist')->withTimestamps();
+    
+/**
+     * The cards that belong to the user's wishlist.
+     */
+    public function wishlist()
+    {
+        // This tells the User they are connected to Cards through the 'wishlists' table
+        return $this->belongsToMany(Card::class, 'wishlists', 'user_id', 'card_id')->withTimestamps();
     }
 
     
