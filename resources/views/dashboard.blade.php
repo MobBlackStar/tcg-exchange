@@ -29,13 +29,20 @@
             <!-- 2. SIDEBAR NAVIGATION -->
             <aside>
                 <div style="display: flex; flex-direction: column; gap: 10px;">
-                    <a href="#" class="btn magenta full"><span class="inner">My Inventory</span></a>
-                    <a href="#" class="btn outline full"><span class="inner">Order History</span></a>
-                    <a href="#" class="btn outline full" style="border-color: var(--a1); color: var(--a1);"><span class="inner">Security Settings</span></a>
+                    <a href="{{ route('inventory.index') }}" class="btn magenta full"><span class="inner">My Inventory</span></a>
+                    <a href="{{ route('orders.index') }}" class="btn outline full"><span class="inner">Order History</span></a>
                     
                     <div style="margin-top: 40px; padding: 20px; border: 2px dashed var(--a5); opacity: 0.6;">
                         <p class="mono" style="font-size: 12px;">&gt; SYSTEM_STATUS: STABLE<br>&gt; ENCRYPTION: ACTIVE</p>
                     </div>
+
+                    <!-- LOGOUT BUTTON -->
+                    <form method="POST" action="{{ route('logout') }}" style="margin-top: 20px;">
+                        @csrf
+                        <button type="submit" class="btn outline full" style="border-color: var(--a1); color: var(--a1);">
+                            <span class="inner">Disconnect [X]</span>
+                        </button>
+                    </form>
                 </div>
             </aside>
 
@@ -58,11 +65,11 @@
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- This will be a @foreach later when Moataz gives us the data -->
+                            {{-- Safe Blade Comment: We will loop through the data here later --}}
                             <tr style="border-bottom: 1px solid rgba(255,255,255,0.1);">
                                 <td style="padding: 15px;">#89631139 (Blue-Eyes)</td>
                                 <td style="padding: 15px;"><span class="tag" style="border-color: var(--a3);"><span class="label" style="color: var(--a3);">MINT</span></span></td>
-                                <td style="padding: 15px;">$250.00</td>
+                                <td style="padding: 15px;">250.00 DT</td>
                                 <td style="padding: 15px;">
                                     <button class="mono" style="color: var(--a5); background: none; border: none; cursor: pointer;">[EDIT]</button>
                                     <button class="mono" style="color: var(--a1); background: none; border: none; cursor: pointer; margin-left: 10px;">[DELETE]</button>

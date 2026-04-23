@@ -89,49 +89,93 @@
         const CSRF_TOKEN = '{{ csrf_token() }}';
         const AUTH_USER_ID = '{{ auth()->id() ?? 0 }}';
         let chatPartnerId = 1; // Default to Seto Kaiba for testing
+        // --- MOATAZ'S CART INTEGRATION ---
+async function addToCart(listingId) {
+    try {
+        let response = await fetch('/cart/add', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            // Note: We send quantity 1 by default
+            body: JSON.stringify({ listing_id: listingId, quantity: 1 }) 
+        });
+        
+        let data = await response.json();
+        
+        if(data.success || response.ok) {
+            // Success! Show Sarah's Neon Toast
+            showNotification("> " + (data.message ? data.message.toUpperCase() : "ARTIFACT_ADDED_TO_CARGO"), false);
+        } else {
+            // Failed! Vibrate and show error
+            showNotification("> ERROR: " + (data.message ? data.message.toUpperCase() : "TRANSACTION_FAILED"), true);
+        }
+    } catch (e) {
+        showNotification("> ERROR: SERVER_UNREACHABLE", true);
+    }
+}
 
         // --- 1. NOTIFICATION & WISHLIST LOGIC ---
-        function showNotification(message, vibrate = false) {
-            const toast = document.getElementById('neon-notification');
-            const text = document.getElementById('notification-text');
-            text.innerText = message;
-            
-            toast.classList.add('active');
-            if(vibrate) toast.style.animation = "vibrate 0.2s linear infinite";
-            toast.style.bottom = '40px'; 
+function showNotification(message, vibrate = false, priority = false) {
+    const toast = document.getElementById('neon-notification');
+    const text = document.getElementById('notification-text');
+    
+    text.innerText = message;
+    
+    // THE COLOR SWITCH
+    if (priority) {
+        // High Priority: PURE RED (var(--a1))
+        text.style.color = "var(--a1)";
+        toast.style.borderColor = "var(--a1)";
+        toast.style.boxShadow = "0 0 25px var(--a1), 6px 6px 0 var(--ink-c)";
+    } else {
+        // Standard: HOT PINK (var(--a4))
+        text.style.color = "var(--a4)";
+        toast.style.borderColor = "var(--a4)";
+        toast.style.boxShadow = "0 0 20px var(--a4), 6px 6px 0 var(--ink-c)";
+    }
+    
+    toast.style.bottom = '40px'; 
+    
+    if(vibrate) toast.classList.add('vibrate-alert');
 
-            setTimeout(() => { 
-                toast.style.bottom = '-100px'; 
-                toast.style.animation = "none";
-            }, 3000);
-        }
+    setTimeout(() => { 
+        toast.style.bottom = '-100px'; 
+        toast.classList.remove('vibrate-alert');
+    }, 3000);
+}
 
         async function toggleWishlist(event, cardId) {
-            event.preventDefault();
-            const btn = event.currentTarget;
-            const wholeCard = btn.closest('.tcard');
+    event.preventDefault();
+    const btn = event.currentTarget;
+    const wholeCard = btn.closest('.tcard');
 
-            try {
-                const response = await fetch('/wishlist/toggle', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
-                    body: JSON.stringify({ card_id: cardId })
-                });
-                const data = await response.json();
+    try {
+        const response = await fetch('/wishlist/toggle', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
+            body: JSON.stringify({ card_id: cardId })
+        });
+        const data = await response.json();
 
-                if (data.status === 'added') {
-                    btn.classList.add('active');
-                    if(wholeCard) wholeCard.classList.add('wishlisted');
-                    showNotification("ADD ME TO CARD", true);
-                } else {
-                    btn.classList.remove('active');
-                    if(wholeCard) wholeCard.classList.remove('wishlisted');
-                    showNotification("> SIGNAL_RELEASED", false);
-                }
-            } catch (e) {
-                showNotification("> LOGIN_REQUIRED", true);
-            }
+        if (data.status === 'added') {
+            btn.classList.add('active');
+            if(wholeCard) wholeCard.classList.add('wishlisted');
+            
+            // WE CALL IT WITH 'true' FOR VIBRATE AND 'true' FOR RED PRIORITY
+            showNotification("ADD ME TO CARD!", true, true); 
+        } else {
+            btn.classList.remove('active');
+            if(wholeCard) wholeCard.classList.remove('wishlisted');
+            
+            // Standard notification (Magenta, no vibrate)
+            showNotification("> SIGNAL_RELEASED", false, false);
         }
+    } catch (e) {
+        showNotification("> LOGIN_REQUIRED", true, true);
+    }
+}
 
         // --- 2. CHAT UI LOGIC ---
         function toggleChat() {
@@ -149,41 +193,78 @@
 
         // --- 3. AJAX CHAT LOGIC ---
         async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const content = input.value.trim();
-            if (content === "") return;
+    var input = document.getElementById('chatInput');
+    var box = document.getElementById('chatMessages');
+    var content = input.value.trim();
 
-            try {
-                const response = await fetch('/chat/send', {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': CSRF_TOKEN },
-                    body: JSON.stringify({ receiver_id: chatPartnerId, content: content })
-                });
-                if (response.ok) {
-                    input.value = "";
-                    fetchMessages();
-                }
-            } catch (error) { console.error('Transmission Failed:', error); }
+    if (content === "") return;
+
+    // --- 1. VISUAL FEEDBACK (Sarah's UI logic) ---
+    // We show the message instantly so the user knows it "sent"
+    const msgDiv = document.createElement('div');
+    msgDiv.className = 'tag';
+    msgDiv.style.alignSelf = 'flex-end';
+    msgDiv.style.borderColor = 'var(--a4)'; // Hot Pink/Magenta
+    msgDiv.innerHTML = '<span class="label" style="color: var(--a4);">YOU: ' + content + '</span>';
+    box.appendChild(msgDiv);
+    
+    input.value = ""; // Clear input
+    box.scrollTop = box.scrollHeight; // Auto-scroll
+
+    // --- 2. TRANSMISSION (The Bridge to Moataz) ---
+    try {
+        const response = await fetch('/chat/send', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content
+            },
+            body: JSON.stringify({
+                receiver_id: 2, // Default chat partner
+                content: content
+            })
+        });
+
+        if (!response.ok) {
+            console.warn("System: Backend not responding. Staying in Local-Only mode.");
         }
+    } catch (e) {
+        console.error("Comm Satellite Offline. Message saved to local cache only.");
+    }
+}
 
         async function fetchMessages() {
-            try {
-                const res = await fetch('/chat/fetch/' + chatPartnerId);
-                const msgs = await res.json();
-                const box = document.getElementById('chatMessages');
-                box.innerHTML = '';
-                msgs.forEach(m => {
-                    const div = document.createElement('div');
-                    div.className = 'tag';
-                    const isMe = m.sender_id == AUTH_USER_ID;
-                    div.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
-                    div.style.borderColor = isMe ? 'var(--a4)' : 'var(--a5)';
-                    div.innerHTML = '<span class="label" style="color:' + (isMe ? 'var(--a4)' : 'var(--a5)') + ';">' + (isMe ? 'YOU' : 'OPPONENT') + ': ' + m.content + '</span>';
-                    box.appendChild(div);
-                });
+    try {
+        const response = await fetch('/chat/fetch/' + receiverId);
+        if (!response.ok) return; // Exit if Moataz's backend isn't ready
+
+        const data = await response.json();
+        const box = document.getElementById('chatMessages');
+
+        data.forEach(msg => {
+            // THE TRICK: Check if this message ID is already on the screen
+            const existingMessage = document.getElementById('msg-' + msg.id);
+            
+            if (!existingMessage) {
+                const msgDiv = document.createElement('div');
+                msgDiv.id = 'msg-' + msg.id; // Give it a unique ID
+                msgDiv.className = 'tag';
+                
+                const isMe = msg.sender_id == AUTH_USER_ID;
+                msgDiv.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
+                msgDiv.style.borderColor = isMe ? 'var(--a4)' : 'var(--a5)';
+                
+                msgDiv.innerHTML = '<span class="label" style="color: ' + (isMe ? 'var(--a4)' : 'var(--a5)') + ';">' + 
+                                   (isMe ? 'YOU' : 'OPPONENT') + ': ' + msg.content + '</span>';
+                
+                box.appendChild(msgDiv);
                 box.scrollTop = box.scrollHeight;
-            } catch (e) { }
-        }
+            }
+        });
+    } catch (error) {
+        // Librarian is asleep, leave the chalkboard alone
+    }
+}
         setInterval(fetchMessages, 4000);
     </script>
 
