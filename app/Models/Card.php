@@ -28,4 +28,9 @@ class Card extends Model
     {
         return $this->hasMany(Listing::class);
     }
+    // [TECH LEAD FIX]: The link Sarah's UI needs to check if a card is favorited
+    public function wishlistedBy()
+    {
+        return $this->belongsToMany(User::class, 'wishlist')->withTimestamps();
+    }
 }

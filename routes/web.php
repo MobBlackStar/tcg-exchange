@@ -11,93 +11,70 @@ use App\Http\Controllers\NexusController;
 use App\Http\Controllers\CatalogController;
 use App\Http\Controllers\WishlistController;
 use App\Http\Controllers\DeckController;
+use Illuminate\Http\Request;
+use App\Models\Card;
 
-/*
-|--------------------------------------------------------------------------
-| Public Routes (Anyone can visit these)
-|--------------------------------------------------------------------------
-*/
-Route::get('/', function () {
-    return view('welcome'); 
-});
-
-// [SARAH DOMAIN: PUBLIC CATALOG & CARDS]
+Route::get('/', function () { return view('welcome'); });
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
 Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show'); 
 
+// [TECH LEAD FIX]: REAL-TIME API SEARCH FOR THE INVENTORY!
+Route::get('/api/cards/search', function (Request $request) {
+    if (!$request->filled('q')) return response()->json([]);
+    return Card::where('name', 'like', '%' . $request->q . '%')->limit(20)->get(['id', 'name', 'passcode']);
+})->name('api.cards.search');
 
-/*
-|--------------------------------------------------------------------------
-| Authenticated Routes (Must be logged in to visit these)
-|--------------------------------------------------------------------------
-*/
+
+// --- USERS MUST BE LOGGED IN (But maybe not verified yet, so they can access their profile to resend the email) ---
 Route::middleware('auth')->group(function () {
+    Route::get('/profile',[ProfileController::class, 'edit'])->name('profile.edit');
+    Route::patch('/profile',[ProfileController::class, 'update'])->name('profile.update');
+    Route::delete('/profile',[ProfileController::class, 'destroy'])->name('profile.destroy');
+});
+
+
+// ---[TECH LEAD FIX] USERS MUST BE LOGGED IN *AND* VERIFIED TO USE THE PLATFORM ---
+Route::middleware(['auth', 'verified'])->group(function () {
     
-    // [RITEJ DOMAIN: PROFILE MANAGEMENT]
-    Route::get('/dashboard', function () {
-        return view('dashboard');
-    })->name('dashboard');
+    Route::get('/dashboard', function () { return view('dashboard'); })->name('dashboard');
 
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
-    // [SARAH DOMAIN: WISHLIST]
-    Route::get('/favorites', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::get('/favorites',[WishlistController::class, 'index'])->name('wishlist.index');
     Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
 
-    // [MOATAZ DOMAIN: INVENTORY]
     Route::get('/my-inventory', [ListingController::class, 'index'])->name('inventory.index');
     Route::post('/inventory/add', [ListingController::class, 'store'])->name('inventory.store');
+    Route::patch('/inventory/{listing}', [ListingController::class, 'update'])->name('inventory.update'); 
     Route::delete('/inventory/{listing}', [ListingController::class, 'destroy'])->name('inventory.destroy');
 
-    // [MOATAZ DOMAIN: CART]
-    Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
-    Route::post('/cart/add', [CartController::class, 'add'])->name('cart.add');
-    Route::patch('/cart/update', [CartController::class, 'update'])->name('cart.update');
-    Route::delete('/cart/remove', [CartController::class, 'remove'])->name('cart.remove');
+    Route::get('/cart',[CartController::class, 'index'])->name('cart.index');
+    Route::post('/cart/add',[CartController::class, 'add'])->name('cart.add');
+    Route::patch('/cart/update',[CartController::class, 'update'])->name('cart.update');
+    Route::delete('/cart/remove',[CartController::class, 'remove'])->name('cart.remove');
 
-    // [MOATAZ DOMAIN: CHECKOUT & ORDERS]
     Route::post('/checkout', [OrderController::class, 'checkout'])->name('checkout.process');
     Route::get('/my-orders', [OrderController::class, 'index'])->name('orders.index');
     Route::patch('/order/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
-
-    // [MOATAZ DOMAIN: REVIEWS]
     Route::post('/review/store', [ReviewController::class, 'store'])->name('reviews.store');
 
-    // [MOATAZ & SARAH DOMAIN: AJAX CHAT API]
+    Route::get('/inbox',[ChatController::class, 'inbox'])->name('chat.inbox'); 
     Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
-    Route::get('/chat/fetch/{receiver_id}', [ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::get('/chat/fetch/{receiver_id}',[ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::get('/chat/unread',[ChatController::class, 'checkUnread'])->name('chat.unread'); 
 
-    // [MOATAZ DOMAIN: DECK BUILDER]
-    Route::get('/decks', [DeckController::class, 'index'])->name('decks.index');
-    Route::post('/deck/create', [DeckController::class, 'store'])->name('deck.store');
+    Route::get('/decks',[DeckController::class, 'index'])->name('decks.index');
+    Route::post('/deck/create',[DeckController::class, 'store'])->name('deck.store');
     Route::get('/deck/{id}/builder', [DeckController::class, 'builder'])->name('deck.builder');
     Route::post('/deck/{id}/add', [DeckController::class, 'addCard'])->name('deck.addCard');
-    Route::delete('/deck/{deckId}/remove/{cardId}', [DeckController::class, 'removeCard'])->name('deck.removeCard');
+    Route::delete('/deck/{deckId}/remove/{cardId}',[DeckController::class, 'removeCard'])->name('deck.removeCard');
     Route::post('/deck/{id}/preview', [DeckController::class, 'setPreview'])->name('deck.setPreview');
     Route::get('/deck/{id}/export',[\App\Http\Controllers\DeckController::class, 'exportYdk'])->name('deck.export');
     Route::post('/deck/{id}/import',[\App\Http\Controllers\DeckController::class, 'importYdk'])->name('deck.import');
-
-    // [TECH LEAD DOMAIN: THE NEXUS]
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
 });
 
-
-/*
-|--------------------------------------------------------------------------
-| [RITEJ DOMAIN] Admin Secure Routes (Must be logged in AND be an Admin)
-|--------------------------------------------------------------------------
-*/
+// --- ADMIN ROUTES ---
 Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':admin'])->group(function () {
-    Route::get('/admin/dashboard', function () {
-        return view('admin.dashboard');
-    })->name('admin.dashboard');
+    Route::get('/admin/dashboard', function () { return view('admin.dashboard'); })->name('admin.dashboard');
 });
 
-/*
-|--------------------------------------------------------------------------
-| Laravel Breeze Default Auth Routes (Login, Register, Password Reset)
-|--------------------------------------------------------------------------
-*/
 require __DIR__.'/auth.php';

@@ -1,65 +1,70 @@
 @extends('layouts.master')
 
 @section('content')
-<section class="section" style="min-height: 100vh; display: flex; flex-direction: column; align-items: center;">
-    <div class="pattern-stripes" style="position:absolute;inset:0;opacity:.1;pointer-events:none"></div>
-
-    <div class="container" style="display: flex; flex-direction: column; gap: 40px; align-items: center;">
-        
-        <!-- Header -->
-        <div class="heading-block" style="text-align: center; margin-bottom: 20px;">
-            <span class="tag cyan-on-dark" style="margin-bottom:24px"><span class="label">&gt; module.market</span></span>
-            <h2 class="h2 text-stack-sm">Market <span class="accent-c">Data.</span></h2>
-        </div>
-
-        <div style="display: flex; flex-wrap: wrap; gap: 40px; width: 100%; justify-content: center; align-items: flex-start;">
+<section class="section" style="min-height: 100vh; padding-top: 50px;">
+    <div class="container-narrow">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
             
-            <!-- LEFT COLUMN: The Card Itself -->
-            <div class="tcard shadow-brick-yellow" style="width: 100%; max-width: 400px; padding: 24px; text-align: center;">
-                <div class="corner square bgc-3"></div>
-                <h3 style="color: var(--a3); margin-bottom: 10px;">{{ $card->name }}</h3>
-                <p class="mono" style="color: var(--chrome-c); opacity: 0.8; margin-bottom: 20px;">Passcode: {{ $card->passcode }}</p>
-                <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 100%; max-width: 300px; border: 4px solid var(--ink-c); box-shadow: 0 0 20px rgba(0,0,0,0.5);">
-                <div style="margin-top: 20px; background: var(--bg); padding: 15px; border: 2px solid var(--ink-c); text-align: left; color: var(--chrome-c); font-size: 0.9rem;">
-                    {!! nl2br(e($card->description)) !!}
+            <!-- LEFT: Holographic Card Art -->
+            <div style="position: relative;">
+                <div class="tcard shadow-brick-cyan anim-float" style="width: 100%; padding: 20px; background: hsl(var(--card)/.9); max-width: 400px; margin: 0 auto;">
+                    <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 100%; border: 4px solid var(--ink-c); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
                 </div>
             </div>
 
-            <!-- RIGHT COLUMN: The Active Sellers -->
-            <div style="flex: 1; min-width: 300px; display: flex; flex-direction: column; gap: 20px;">
-                <h3 class="h2 text-stack-sm" style="font-size: 2rem;">Active <span class="accent-m">Listings.</span></h3>
+            <!-- RIGHT: The Market Data Feed -->
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <span class="tag yellow" style="width: fit-content;"><span class="label">&gt; artifact.detected</span></span>
                 
-                @forelse($listings as $listing)
-                    <div class="tcard shadow-brick" style="padding: 20px; display: flex; justify-content: space-between; align-items: center; border-left: 6px solid var(--a4);">
-                        
-                        <div>
-                            <h4 style="color: var(--chrome-c); font-size: 1.2rem;">Seller: <span style="color: var(--a5);">{{ $listing->seller->name }}</span></h4>
-                            <p style="font-family: 'Share Tech Mono'; color: var(--a3); font-size: 0.9rem;">
-                                Cond: {{ $listing->condition }} | Qty Available: {{ $listing->quantity }}
-                            </p>
-                            <p style="font-family: 'Share Tech Mono'; color: var(--chrome-c); font-size: 0.8rem; margin-top: 5px;">
-                                Seller Rating: {{ $listing->seller->reputation_score }} / 5.00
-                            </p>
-                        </div>
+                <h1 class="hero-h1" style="font-size: 40px; line-height: 1;">
+                    <span class="row1 text-stack">{{ $card->name }}</span>
+                </h1>
 
-                        <div style="text-align: right; display: flex; flex-direction: column; gap: 10px; align-items: flex-end;">
-                            <span class="font-display" style="font-size: 1.8rem; color: var(--a1);">{{ $listing->price }} DT</span>
-                            
-                            <!-- Moataz's Add To Cart Form -->
-                            <form action="{{ route('cart.add') }}" method="POST" style="display: flex; gap: 10px; align-items: center;">
-                                @csrf
-                                <input type="hidden" name="listing_id" value="{{ $listing->id }}">
-                                <button type="submit" class="btn magenta sm"><span class="inner">ADD TO CART</span></button>
-                            </form>
-                        </div>
+                <div style="background: hsl(var(--card)/.6); border-left: 4px solid var(--a5); padding: 20px;">
+                    <p class="mono" style="color: var(--chrome-c); line-height: 1.8;">
+                        &gt; TYPE: {{ $card->type }}<br>
+                        &gt; CATEGORY: {{ strtoupper($card->category->name ?? 'UNKNOWN') }}<br>
+                        &gt; PASSCODE: {{ $card->passcode }}
+                    </p>
+                </div>
 
+                <p class="lede" style="font-size: 14px;">{{ $card->description }}</p>
+
+                <!-- THE MARKETPLACE (Moataz's Listings) -->
+                <div style="border: 4px solid var(--ink-c); padding: 24px; background: var(--bg); box-shadow: 6px 6px 0 var(--a3);">
+                    <h4 class="mono" style="color: var(--a3); margin-bottom: 16px; font-size: 20px;">&gt; ACTIVE_SELLERS</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        @forelse($listings as $listing)
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--a5); padding-bottom: 10px;">
+                                <div>
+                                    <span style="color: var(--a5); font-family: 'Share Tech Mono';">DUELIST: {{ $listing->seller->name }}</span><br>
+                                    <span style="color: var(--chrome-c); font-size: 12px;">COND: {{ $listing->condition }} | QTY: {{ $listing->quantity }}</span>
+                                </div>
+                                
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="font-display" style="color: var(--a3); font-size: 20px;">{{ $listing->price }} DT</span>
+                                    
+                                    <!--[TECH LEAD FIX]: RESTORED NEGOTIATE BUTTON -->
+                                    @if(auth()->check() && auth()->id() !== $listing->seller_id)
+                                        <button onclick="openChatWith({{ $listing->seller->id }}, '{{ addslashes($listing->seller->name) }}')" class="btn outline sm" style="border-color: var(--a5); color: var(--a5);">
+                                            <span class="inner">NEGOTIATE</span>
+                                        </button>
+                                    @endif
+
+                                    <!-- BUY BUTTON -->
+                                    <form action="{{ route('cart.add') }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <input type="hidden" name="listing_id" value="{{ $listing->id }}">
+                                        <button type="submit" class="btn cyan sm" onclick="showNotification('> INITIATING_TRANSACTION', false)"><span class="inner">BUY</span></button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="mono" style="color: var(--a1);">&gt; NO ACTIVE LISTINGS FOUND FOR THIS ARTIFACT.</p>
+                        @endforelse
                     </div>
-                @empty
-                    <div class="tcard" style="padding: 40px; text-align: center; border-color: var(--a1);">
-                        <p style="color: var(--a1); font-family: 'Share Tech Mono';">&gt; ERROR: NO ACTIVE LISTINGS FOUND.</p>
-                        <p style="color: var(--chrome-c); font-size: 0.9rem; margin-top: 10px;">No duelists are currently selling this card.</p>
-                    </div>
-                @endforelse
+                </div>
             </div>
         </div>
     </div>

@@ -14,10 +14,15 @@ class OrderController extends Controller
     // 1. Show the Order History (Satisfies Rubric Section E: Historique des commandes)
     public function index()
     {
-        // Get all orders where the user is the buyer, load the items inside them
-        $orders = Order::where('buyer_id', auth()->id())->with('items.listing.card')->latest()->get();
-        
-        return view('orders.index', compact('orders'));
+        // 1. My Purchases (Receipts)
+        $myOrders = Order::where('buyer_id', auth()->id())->with('items.listing.card')->latest()->get();
+
+        // 2. [TECH LEAD FIX]: Incoming Orders (The Merchant's Cash Register)
+        $incomingOrders = Order::whereHas('items.listing', function($q) {
+            $q->where('seller_id', auth()->id());
+        })->with('items.listing.card', 'buyer')->latest()->get();
+
+        return view('orders.index', compact('myOrders', 'incomingOrders'));
     }
 
     // 2. Process the Cart into an Order (Satisfies Rubric Section E: Passer une commande)
@@ -59,17 +64,25 @@ class OrderController extends Controller
                 // Deduct stock from the seller's listing
                 $listing = Listing::find($item['listing_id']);
                 $listing->quantity -= $item['quantity'];
-                
+
                 // If stock reaches 0, hide it from the market
                 if ($listing->quantity <= 0) {
                     $listing->is_active = false;
                 }
                 $listing->save();
+
+                // [TECH LEAD FIX]: Auto-Notify Seller via Chat
+                \App\Models\Message::create([
+                    'sender_id' => auth()->id(),
+                    'receiver_id' => $listing->seller_id,
+                    'listing_id' => $listing->id,
+                    'content' => "[SYSTEM ALERT]: I have purchased {$item['quantity']}x {$listing->card->name} for " . ($item['price'] * $item['quantity']) . " DT. Awaiting shipment."
+                ]);
             }
 
             // Empty the session cart after successful purchase
             session()->forget('cart');
-            
+
             DB::commit();
 
             return redirect()->route('orders.index')->with('success', 'Order placed successfully! Status: En attente.');
@@ -83,7 +96,6 @@ class OrderController extends Controller
     // 3. Update Order Status (For Sellers/Admins)
     public function updateStatus(Request $request, Order $order)
     {
-        // In a real app, only Admins or Sellers would do this, but we leave it accessible for the Demo
         $request->validate([
             'status' => 'required|in:En attente,Validée,Annulée' // Exact Rubric Statuses
         ]);

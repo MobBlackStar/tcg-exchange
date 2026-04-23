@@ -55,4 +55,23 @@ class ListingController extends Controller
 
         return redirect()->back()->with('success', 'Listing removed successfully.');
     }
+    // [TECH LEAD FIX]: Rubric Section B (Modifier)
+    public function update(Request $request, Listing $listing)
+    {
+        if ($listing->seller_id !== Auth::id()) abort(403, 'Unauthorized.');
+        
+        $request->validate([
+            'price' => 'required|numeric|min:0.01',
+            'condition' => 'required|string',
+            'quantity' => 'required|integer|min:1'
+        ]);
+
+        $listing->update([
+            'price' => $request->price,
+            'condition' => $request->condition,
+            'quantity' => $request->quantity,
+        ]);
+
+        return back()->with('success', 'Artifact data updated.');
+    }
 }
