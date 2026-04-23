@@ -11,10 +11,13 @@
                 </div>
 
                 <!-- Navigation Links -->
-                <div class="hidden space-x-8 sm:-my-px sm:ms-10 sm:flex">
-                    <x-nav-link :href="route('inventory.index')" :active="request()->routeIs('inventory.index')">
-    {{ __('My Binder') }}
-</x-nav-link>
+                <nav class="nav-links">
+                    <a href="{{ route('catalog') }}">&gt; CATALOG</a>
+                    <a href="{{ route('cart.index') }}">&gt; MY CART</a>
+                    <a href="{{ route('inventory.index') }}">&gt; MY BINDER</a>
+                    <a href="{{ route('decks.index') }}">&gt; MY DECKS</a>
+                    <a href="{{ route('dashboard') }}">&gt; DASHBOARD</a>
+                </nav>
                 </div>
             </div>
 

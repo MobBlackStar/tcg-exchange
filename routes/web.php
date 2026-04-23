@@ -66,7 +66,19 @@ Route::get('/dashboard', function () {
 
     // [TECH LEAD DOMAIN: THE NEXUS]
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
+   // [MOATAZ DOMAIN: DECK BUILDER]
+Route::get('/decks', [App\Http\Controllers\DeckController::class, 'index'])->name('decks.index');
+Route::get('/deck/{id}/builder', [App\Http\Controllers\DeckController::class, 'builder'])->name('deck.builder');
+Route::post('/deck/create', [App\Http\Controllers\DeckController::class, 'store'])->name('deck.store');
+
+// THIS IS THE LINE YOU WERE MISSING:
+Route::post('/deck/{id}/add', [App\Http\Controllers\DeckController::class, 'addCard'])->name('deck.addCard');
+// Remove card from deck
+Route::delete('/deck/{deckId}/remove/{cardId}', [App\Http\Controllers\DeckController::class, 'removeCard'])->name('deck.removeCard');
+// Set Preview
+Route::post('/deck/{id}/preview', [App\Http\Controllers\DeckController::class, 'setPreview'])->name('deck.setPreview');
 });
+
 
 
 /*

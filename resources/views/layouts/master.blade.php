@@ -24,25 +24,27 @@
 
     <div class="page">
         <!-- THE NAVBAR -->
-        <header class="nav">
-            <div class="nav-inner">
-                <a href="/" class="logo" aria-label="NBD home">
-                    <span class="logo-shapes"><span class="s1"></span><span class="s2"></span><span class="s3"></span></span>
-                    <span class="logo-text">TCG<b>EX</b></span>
-                </a>
-                <nav class="nav-links">
-                    <a href="/catalog">&gt; Catalog</a>
-                    <a href="{{ route('cart.index') }}">&gt; My Cart</a>
-                    
-                    @auth
-                        <a href="{{ url('/dashboard') }}">&gt; My Binder</a>
-                    @else
-                        <a href="{{ route('login') }}">&gt; Login</a>
-                        <a href="{{ route('register') }}">&gt; Register</a>
-                    @endauth
-                </nav>
-            </div>
-        </header>
+        <!-- THE NAVBAR -->
+<header class="nav">
+    <div class="nav-inner">
+        <a href="/" class="logo" aria-label="NBD home">
+            <span class="logo-shapes"><span class="s1"></span><span class="s2"></span><span class="s3"></span></span>
+            <span class="logo-text">TCG<b>EX</b></span>
+        </a>
+        <nav class="nav-links">
+            <a href="{{ route('catalog') }}">&gt; CATALOG</a>
+            <a href="{{ route('cart.index') }}">&gt; MY CART</a>
+            <a href="{{ route('inventory.index') }}">&gt; MY BINDER</a>
+            <a href="{{ route('decks.index') }}">&gt; MY DECKS</a> <!-- HERE IT IS -->
+            
+            @auth
+                <a href="{{ url('/dashboard') }}">&gt; DASHBOARD</a>
+            @else
+                <a href="{{ route('login') }}">&gt; LOGIN</a>
+            @endauth
+        </nav>
+    </div>
+</header>
 
         <!-- THIS IS WHERE OTHER PAGES INJECT THEIR UNIQUE CONTENT -->
         <main style="min-height: 80vh; padding-top: 100px;">
