@@ -1,4 +1,4 @@
-<section class="space-y-6">
+<section class="space-y-6" style="text-align: center;">
     <header>
         <h2 class="text-lg font-medium" style="color: var(--a1); font-size: 1.5rem; font-family: 'Orbitron', sans-serif;">
             {{ __('Delete Account') }}
@@ -8,14 +8,17 @@
         </p>
     </header>
 
+    <div style="display: flex; justify-content: center;">
     <button class="btn outline sm" style="border-color: var(--a1); color: var(--a1);"
         x-data=""
         x-on:click.prevent="$dispatch('open-modal', 'confirm-user-deletion')">
         <span class="inner">{{ __('INITIATE SELF DESTRUCT') }}</span>
     </button>
 
+    </div>
+
     <x-modal name="confirm-user-deletion" :show="$errors->userDeletion->isNotEmpty()" focusable>
-        <form method="post" action="{{ route('profile.destroy') }}" style="padding: 30px; background: var(--bg); border: 4px solid var(--a1); box-shadow: 0 0 30px rgba(255,0,0,0.5);">
+        <form method="post" action="{{ route('profile.destroy') }}" style="padding: 30px; background: var(--bg); border: 4px solid var(--a1); box-shadow: 0 0 30px rgba(255,0,0,0.5); text-align: center;">
             @csrf
             @method('delete')
 
@@ -27,14 +30,14 @@
                 {{ __('Please enter your password to confirm you would like to permanently delete your account.') }}
             </p>
 
-            <div style="margin-top: 20px;">
+            <div style="margin-top: 20px; display: flex; justify-content: center;">
                 <x-input-label for="password" value="{{ __('Password') }}" class="sr-only" />
 
                 <x-text-input
                     id="password"
                     name="password"
                     type="password"
-                    style="width: 100%; padding: 12px; background: var(--ink-c); color: var(--chrome-c); border: 2px solid var(--a1); font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;"
+                    style="max-width: 400px; width: 100%; padding: 12px; background: var(--ink-c); color: var(--chrome-c); border: 2px solid var(--a1); font-family: 'Share Tech Mono', monospace; font-size: 1.1rem;"
                     placeholder="{{ __('Password') }}"
                 />
 

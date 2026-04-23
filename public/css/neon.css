@@ -123,12 +123,7 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 }
 
 /* ===== Layout primitives ===== */
-.container {
-    width: 100%;
-    max-width: 1300px; /* Gives the grid room to breathe */
-    margin: 0 auto;
-    padding: 0 20px;
-}
+.container{max-width:1280px;margin:0 auto;padding:0 24px}
 .container-narrow{max-width:960px;margin:0 auto;padding:0 24px}
 .container-tight{max-width:768px;margin:0 auto;padding:0 24px}
 
@@ -199,33 +194,8 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 .btn.md{height:48px;padding:0 28px;font-size:14px}
 .btn.lg{height:64px;padding:0 40px;font-size:16px}
 .btn.full{width:100%}
-.btn.magenta {
-    background: var(--a4);
-    color: #fff;
-    box-shadow: 0 0 15px hsl(var(--accent-4)/.4), 
-                6px 6px 0 var(--ink-c), 
-                12px 12px 0 var(--a4);
-}
-.btn.magenta:hover {
-    box-shadow: 0 0 30px hsl(var(--accent-4)/.8), 
-                0px 0px 0 var(--ink-c), 
-                4px 4px 0 var(--a1);
-    transform: scale(1.05) skewX(-12deg);
-}
-.btn.cyan {
-    background: var(--a5);
-    color: var(--ink-c);
-    box-shadow: 0 0 15px hsl(var(--accent-5)/.4), 
-                6px 6px 0 var(--ink-c), 
-                12px 12px 0 var(--a5);
-}
-
-.btn.cyan:hover {
-    box-shadow: 0 0 30px hsl(var(--accent-5)/.8), 
-                0px 0px 0 var(--ink-c), 
-                4px 4px 0 var(--a2);
-    transform: scale(1.05) skewX(-12deg);
-}
+.btn.magenta{background:var(--a4);color:#fff;box-shadow:6px 6px 0 var(--ink-c), 12px 12px 0 var(--a4), 0 0 40px hsl(var(--accent-4)/.5)}
+.btn.cyan   {background:var(--a5);color:var(--ink-c);box-shadow:6px 6px 0 var(--ink-c), 12px 12px 0 var(--a5), 0 0 40px hsl(var(--accent-5)/.5)}
 .btn.yellow {background:var(--a3);color:var(--ink-c);box-shadow:6px 6px 0 var(--ink-c), 12px 12px 0 var(--a3), 0 0 40px hsl(var(--accent-3)/.6)}
 .btn.outline{background:var(--bg);color:var(--chrome-c);box-shadow:6px 6px 0 var(--ink-c), 12px 12px 0 var(--a3), 0 0 40px hsl(var(--accent-4)/.5)}
 
@@ -309,44 +279,17 @@ h1,h2,h3,h4,h5,h6{font-family:'Outfit',sans-serif;font-weight:900;line-height:1.
 .lede{margin-top:24px;font-family:'Share Tech Mono',monospace;color:hsl(var(--chrome)/.7);font-size:18px;max-width:560px}
 
 /* ===== Features grid ===== */
-.features-grid {
-    display: grid;
-    /* This creates as many columns as possible, at least 300px wide each */
-    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); 
-    gap: 40px;
-    width: 100%;
-    justify-content: center;
-    align-items: start;
-}
+.features-grid{display:grid;grid-template-columns:1fr;gap:40px}
 @media(min-width:768px){.features-grid{grid-template-columns:repeat(2,1fr)}}
 @media(min-width:1100px){.features-grid{grid-template-columns:repeat(3,1fr)}}
 
-/* THE SKELETON + THE UPGRADED PHYSICS */
-.tcard {
-  position: relative;
-  background: hsl(var(--card)/.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 4px solid var(--ink-c);
-  
-  /* THE UPGRADED TRANSITION: 
-     This 'cubic-bezier' makes it snap like a high-end mechanical switch 
-     instead of a boring, slow slide. */
-  transition: all 0.4s cubic-bezier(0.19, 1, 0.22, 1);
-  cursor: pointer;
+.tcard{
+  position:relative;background:hsl(var(--card)/.8);
+  backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);
+  border:4px solid var(--ink-c);
+  transition:transform .3s;
 }
-
-/* THE REACTION */
-.tcard:hover {
-  /* It rises up (-15px), grows slightly (1.02), and tilts (1deg) */
-  transform: translateY(-15px) scale(1.02) rotate(1deg);
-  
-  /* It glows brighter like a screen turning on */
-  filter: brightness(1.2);
-  
-  /* It jumps in front of other cards */
-  z-index: 50; 
-}
+.tcard:hover{transform:translateY(-8px)}
 .tcard.rot-r{transform:rotate(1deg)}
 .tcard.rot-r:hover{transform:rotate(1deg) translateY(-8px)}
 .tcard.rot-l{transform:rotate(-1deg)}
@@ -508,59 +451,4 @@ footer{background:var(--ink-c);color:var(--chrome-c);position:relative}
 .tcard .body img {
     margin: 0 auto 20px auto; 
     display: block;
-}
-/* WISHLIST HEART BUTTON */
-.btn-wishlist {
-    background: transparent;
-    border: 2px solid var(--a4);
-    color: var(--a4);
-    width: 38px;
-    height: 38px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s cubic-bezier(0.19, 1, 0.22, 1);
-    cursor: pointer;
-    position: relative;
-    z-index: 10;
-}
-
-.btn-wishlist:hover {
-    background: var(--a1); /* Red glow on hover */
-    border-color: var(--a1);
-    color: white;
-    box-shadow: 0 0 15px var(--a1);
-    transform: scale(1.1) rotate(10deg);
-}
-
-.btn-wishlist.active {
-    background: var(--a1);
-    color: white;
-    box-shadow: 0 0 25px var(--a1);
-}
-/* THE NEON NOTIFICATION (Toast) */
-#neon-notification {
-    position: fixed;
-    bottom: -100px; /* Hidden by default */
-    left: 50%;
-    transform: translateX(-50%);
-    z-index: 9999;
-    background: var(--bg);
-    border: 3px solid var(--a5);
-    box-shadow: 0 0 20px var(--a5), 6px 6px 0 var(--ink-c);
-    padding: 15px 30px;
-    transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1);
-    pointer-events: none;
-}
-
-#neon-notification.active {
-    bottom: 40px; /* Slides up into view */
-}
-
-#neon-notification .msg {
-    font-family: 'Share Tech Mono', monospace;
-    color: var(--a5);
-    text-transform: uppercase;
-    letter-spacing: 2px;
-    font-weight: bold;
 }

@@ -5,15 +5,32 @@
     <!-- LAYOUT GRID: Preview (300px) | Main/Extra (Center) | Library (400px) -->
     <div style="display: grid; grid-template-columns: 300px 1fr 400px; gap: 20px; height: 80vh;">
         
-        <!-- LEFT: PREVIEW -->
+        <!-- LEFT: PREVIEW & TOOLS -->
         <div class="tcard" style="padding: 20px; display: flex; flex-direction: column; background: hsl(var(--card)/.9);">
-            <h3 class="accent-m" style="margin-bottom:15px;">&gt; PREVIEW</h3>
+            <h3 class="accent-m" style="margin-bottom:15px; font-family: 'Share Tech Mono';">&gt; DECK: {{ strtoupper($deck->name) }}</h3>
+            
             @if($deck->previewCard)
-                <img src="{{ $deck->previewCard->image_url }}" style="width: 100%; border: 2px solid var(--a3); box-shadow: 0 0 20px var(--a3);">
-                <p class="mono" style="margin-top:15px; font-size: 0.9rem;">{{ $deck->previewCard->name }}</p>
+                <img src="{{ $deck->previewCard->image_url }}" style="width: 100%; border: 2px solid var(--a3); box-shadow: 0 0 20px var(--a3); margin-bottom: 20px;">
             @else
-                <p class="mono">&gt; NO PREVIEW</p>
+                <div style="width: 100%; height: 300px; border: 2px dashed var(--a5); display: grid; place-items: center; margin-bottom: 20px;">
+                    <p class="mono">&gt; NO PREVIEW</p>
+                </div>
             @endif
+
+            <!-- IMPORT / EXPORT TOOLS -->
+            <div style="border-top: 2px solid var(--ink-c); padding-top: 20px; margin-top: auto;">
+                <h4 class="mono" style="color: var(--a5); margin-bottom: 10px;">&gt; DATA_TRANSFER</h4>
+                
+                <a href="{{ route('deck.export', $deck->id) }}" class="btn cyan sm full" style="margin-bottom: 10px;">
+                    <span class="inner">⬇ EXPORT .YDK</span>
+                </a>
+
+                <form action="{{ route('deck.import', $deck->id) }}" method="POST" enctype="multipart/form-data" style="display: flex; flex-direction: column; gap: 5px;">
+                    @csrf
+                    <input type="file" name="ydk_file" required style="font-family: 'Share Tech Mono'; font-size: 10px; color: var(--chrome-c);">
+                    <button type="submit" class="btn yellow sm full"><span class="inner">⬆ IMPORT .YDK</span></button>
+                </form>
+            </div>
         </div>
 
         <!-- CENTER: MAIN & EXTRA DECK -->

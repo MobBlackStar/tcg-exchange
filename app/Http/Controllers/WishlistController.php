@@ -7,7 +7,15 @@ use App\Models\Card;
 
 class WishlistController extends Controller
 {
-    // 🧑‍🏫 Toggles a card in the user's wishlist via AJAX
+    // [TECH LEAD FIX]: This loads Sarah's Favorites Page
+    public function index()
+    {
+        // Get the cards the CURRENT user has wishlisted
+        $favorites = auth()->user()->wishlist()->with('category')->get();
+        return view('wishlist', compact('favorites'));
+    }
+
+    // [TECH LEAD FIX]: This powers the AJAX Heart Button
     public function toggle(Request $request)
     {
         $request->validate(['card_id' => 'required|exists:cards,id']);
@@ -15,7 +23,6 @@ class WishlistController extends Controller
         $user = auth()->user();
         $cardId = $request->card_id;
 
-        // Check if the card is already favorited
         $exists = $user->wishlist()->where('card_id', $cardId)->exists();
 
         if ($exists) {

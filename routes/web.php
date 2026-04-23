@@ -9,6 +9,8 @@ use App\Http\Controllers\ReviewController;
 use App\Http\Controllers\ChatController;
 use App\Http\Controllers\NexusController;
 use App\Http\Controllers\CatalogController;
+use App\Http\Controllers\WishlistController;
+use App\Http\Controllers\DeckController;
 
 /*
 |--------------------------------------------------------------------------
@@ -16,12 +18,12 @@ use App\Http\Controllers\CatalogController;
 |--------------------------------------------------------------------------
 */
 Route::get('/', function () {
-    return view('welcome'); // Sarah's cool landing page
+    return view('welcome'); 
 });
 
-// [SARAH DOMAIN: CATALOG] - Public route so anyone can browse cards!
+// [SARAH DOMAIN: PUBLIC CATALOG & CARDS]
 Route::get('/catalog', [CatalogController::class, 'index'])->name('catalog');
-Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show');                                                                            
+Route::get('/catalog/{card}', [CatalogController::class, 'show'])->name('cards.show'); 
 
 
 /*
@@ -40,10 +42,14 @@ Route::middleware('auth')->group(function () {
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
 
+    // [SARAH DOMAIN: WISHLIST]
+    Route::get('/favorites', [WishlistController::class, 'index'])->name('wishlist.index');
+    Route::post('/wishlist/toggle', [WishlistController::class, 'toggle'])->name('wishlist.toggle');
+
     // [MOATAZ DOMAIN: INVENTORY]
-    Route::get('/my-inventory',[ListingController::class, 'index'])->name('inventory.index');
-    Route::post('/inventory/add',[ListingController::class, 'store'])->name('inventory.store');
-    Route::delete('/inventory/{listing}',[ListingController::class, 'destroy'])->name('inventory.destroy');
+    Route::get('/my-inventory', [ListingController::class, 'index'])->name('inventory.index');
+    Route::post('/inventory/add', [ListingController::class, 'store'])->name('inventory.store');
+    Route::delete('/inventory/{listing}', [ListingController::class, 'destroy'])->name('inventory.destroy');
 
     // [MOATAZ DOMAIN: CART]
     Route::get('/cart', [CartController::class, 'index'])->name('cart.index');
@@ -57,25 +63,24 @@ Route::middleware('auth')->group(function () {
     Route::patch('/order/{order}/status', [OrderController::class, 'updateStatus'])->name('orders.updateStatus');
 
     // [MOATAZ DOMAIN: REVIEWS]
-    Route::post('/review/store',[ReviewController::class, 'store'])->name('reviews.store');
+    Route::post('/review/store', [ReviewController::class, 'store'])->name('reviews.store');
 
     // [MOATAZ & SARAH DOMAIN: AJAX CHAT API]
-    Route::post('/chat/send',[ChatController::class, 'sendMessage'])->name('chat.send');
-    Route::get('/chat/fetch/{receiver_id}',[ChatController::class, 'fetchMessages'])->name('chat.fetch');
+    Route::post('/chat/send', [ChatController::class, 'sendMessage'])->name('chat.send');
+    Route::get('/chat/fetch/{receiver_id}', [ChatController::class, 'fetchMessages'])->name('chat.fetch');
+
+    // [MOATAZ DOMAIN: DECK BUILDER]
+    Route::get('/decks', [DeckController::class, 'index'])->name('decks.index');
+    Route::post('/deck/create', [DeckController::class, 'store'])->name('deck.store');
+    Route::get('/deck/{id}/builder', [DeckController::class, 'builder'])->name('deck.builder');
+    Route::post('/deck/{id}/add', [DeckController::class, 'addCard'])->name('deck.addCard');
+    Route::delete('/deck/{deckId}/remove/{cardId}', [DeckController::class, 'removeCard'])->name('deck.removeCard');
+    Route::post('/deck/{id}/preview', [DeckController::class, 'setPreview'])->name('deck.setPreview');
+    Route::get('/deck/{id}/export',[\App\Http\Controllers\DeckController::class, 'exportYdk'])->name('deck.export');
+    Route::post('/deck/{id}/import',[\App\Http\Controllers\DeckController::class, 'importYdk'])->name('deck.import');
 
     // [TECH LEAD DOMAIN: THE NEXUS]
     Route::post('/nexus/upload', [NexusController::class, 'uploadYdk'])->name('nexus.upload');
-    
-    //[MOATAZ DOMAIN: DECK BUILDER]
-    Route::get('/decks',[\App\Http\Controllers\DeckController::class, 'index'])->name('decks.index');
-    Route::post('/deck/create',[\App\Http\Controllers\DeckController::class, 'store'])->name('deck.store');
-    Route::get('/deck/{id}/builder', [\App\Http\Controllers\DeckController::class, 'builder'])->name('deck.builder');
-    Route::post('/deck/{id}/add',[\App\Http\Controllers\DeckController::class, 'addCard'])->name('deck.addCard');
-    Route::delete('/deck/{deckId}/remove/{cardId}', [\App\Http\Controllers\DeckController::class, 'removeCard'])->name('deck.removeCard');
-    Route::post('/deck/{id}/preview',[\App\Http\Controllers\DeckController::class, 'setPreview'])->name('deck.setPreview');
-
-    // [SARAH DOMAIN: WISHLIST]
-    Route::post('/wishlist/toggle',[\App\Http\Controllers\WishlistController::class, 'toggle'])->name('wishlist.toggle');
 });
 
 
@@ -89,7 +94,6 @@ Route::middleware(['auth', \App\Http\Middleware\RoleMiddleware::class . ':admin'
         return view('admin.dashboard');
     })->name('admin.dashboard');
 });
-
 
 /*
 |--------------------------------------------------------------------------

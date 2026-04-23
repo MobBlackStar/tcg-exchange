@@ -23,7 +23,7 @@
     }
 </style>
 
-<section>
+<section style="text-align: center;">
     <header style="margin-bottom: 30px;">
         <h2 style="color: var(--chrome-c); font-size: 1.6rem; font-family: 'Orbitron', sans-serif; text-transform: uppercase;">
             {{ __('Profile Information') }}
@@ -37,7 +37,7 @@
         @csrf
     </form>
 
-    <form method="post" action="{{ route('profile.update') }}" style="display: flex; flex-direction: column; gap: 25px;">
+    <form method="post" action="{{ route('profile.update') }}" style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
         @csrf
         @method('patch')
 
@@ -53,7 +53,7 @@
             <x-input-error class="mt-2" :messages="$errors->get('email')" style="color: var(--a1);" />
         </div>
 
-        <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 10px;">
             <button class="btn cyan md"><span class="inner">{{ __('SAVE DATA') }}</span></button>
 
             @if (session('status') === 'profile-updated')

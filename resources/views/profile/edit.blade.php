@@ -1,14 +1,14 @@
 @extends('layouts.master')
 
 @section('content')
-<div class="container-narrow" style="padding-top: 60px; padding-bottom: 60px;">
+<div class="container-narrow" style="padding-top: 60px; padding-bottom: 60px; text-align: center;">
     
-    <div style="margin-bottom: 40px;">
+    <div style="margin-bottom: 40px; display: inline-block; text-align: left;">
         <span class="tag cyan-on-dark" style="margin-bottom: 15px;"><span class="label">&gt; SECURE_CONNECTION</span></span>
         <h2 class="h2 text-stack-sm" style="font-size: 3rem;">DATA <span class="accent-m">FORGE</span></h2>
     </div>
 
-    <div style="display: flex; flex-direction: column; gap: 40px;">
+    <div style="display: flex; flex-direction: column; gap: 40px; align-items: center;">
 
         <!-- PROFILE INFORMATION FORM -->
         <div class="tcard shadow-brick-cyan">

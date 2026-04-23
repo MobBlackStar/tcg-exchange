@@ -1,0 +1,62 @@
+@extends('layouts.master')
+
+@section('content')
+<section class="section" style="min-height: 100vh; padding-top: 50px;">
+    <div class="container-narrow">
+        <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 64px; align-items: start;">
+            
+            <div style="position: relative;">
+                <div class="tcard shadow-brick-cyan anim-float" style="width: 100%; padding: 20px; background: hsl(var(--card)/.9); max-width: 400px; margin: 0 auto;">
+                    <img src="{{ $card->image_url }}" alt="{{ $card->name }}" style="width: 100%; border: 4px solid var(--ink-c); box-shadow: 0 0 30px rgba(0,0,0,0.8);">
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 20px;">
+                <span class="tag yellow" style="width: fit-content;"><span class="label">&gt; artifact.detected</span></span>
+                
+                <h1 class="hero-h1" style="font-size: 40px; line-height: 1;">
+                    <span class="row1 text-stack">{{ $card->name }}</span>
+                </h1>
+
+                <div style="background: hsl(var(--card)/.6); border-left: 4px solid var(--a5); padding: 20px;">
+                    <p class="mono" style="color: var(--chrome-c); line-height: 1.8;">
+                        &gt; TYPE: {{ $card->type }}<br>
+                        &gt; CATEGORY: {{ strtoupper($card->category->name ?? 'UNKNOWN') }}<br>
+                        &gt; PASSCODE: {{ $card->passcode }}
+                    </p>
+                </div>
+
+                <p class="lede" style="font-size: 14px;">{{ $card->description }}</p>
+
+                <!-- MOATAZ'S MARKETPLACE LOGIC INJECTED INTO SARAH'S UI -->
+                <div style="border: 4px solid var(--ink-c); padding: 24px; background: var(--bg); box-shadow: 6px 6px 0 var(--a3);">
+                    <h4 class="mono" style="color: var(--a3); margin-bottom: 16px; font-size: 20px;">&gt; ACTIVE_SELLERS</h4>
+                    
+                    <div style="display: flex; flex-direction: column; gap: 15px;">
+                        @forelse($listings as $listing)
+                            <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid var(--a5); padding-bottom: 10px;">
+                                <div>
+                                    <span style="color: var(--a5); font-family: 'Share Tech Mono';">DUELIST: {{ $listing->seller->name }}</span><br>
+                                    <span style="color: var(--chrome-c); font-size: 12px;">COND: {{ $listing->condition }} | QTY: {{ $listing->quantity }}</span>
+                                </div>
+                                <div style="display: flex; align-items: center; gap: 15px;">
+                                    <span class="font-display" style="color: var(--a3); font-size: 20px;">{{ $listing->price }} DT</span>
+                                    
+                                    <!-- [TECH LEAD FIX]: Real Form to hit Moataz's Cart Engine -->
+                                    <form action="{{ route('cart.add') }}" method="POST" style="margin:0;">
+                                        @csrf
+                                        <input type="hidden" name="listing_id" value="{{ $listing->id }}">
+                                        <button type="submit" class="btn cyan sm"><span class="inner">BUY</span></button>
+                                    </form>
+                                </div>
+                            </div>
+                        @empty
+                            <p class="mono" style="color: var(--a1);">&gt; NO ACTIVE LISTINGS FOUND FOR THIS ARTIFACT.</p>
+                        @endforelse
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+@endsection

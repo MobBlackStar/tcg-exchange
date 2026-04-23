@@ -94,4 +94,68 @@ class DeckController extends Controller
         $deck->update(['preview_card_id' => $request->card_id]);
         return back()->with('success', 'Preview updated!');
     }
+    // [GOD-TIER]: Export a built deck to a .ydk file instantly
+    public function exportYdk($deckId)
+    {
+        $deck = \App\Models\Deck::with('cards')->findOrFail($deckId);
+        
+        $content = "#created by TCG_EXCHANGE\n#main\n";
+        foreach ($deck->cards->where('pivot.location', 'main') as $card) {
+            for ($i = 0; $i < $card->pivot->quantity; $i++) {
+                $content .= $card->passcode . "\n";
+            }
+        }
+        
+        $content .= "#extra\n";
+        foreach ($deck->cards->where('pivot.location', 'extra') as $card) {
+            for ($i = 0; $i < $card->pivot->quantity; $i++) {
+                $content .= $card->passcode . "\n";
+            }
+        }
+        $content .= "!side\n";
+
+        // Clean the filename
+        $filename = preg_replace('/[^A-Za-z0-9_]/', '_', $deck->name) . '.ydk';
+
+        return response($content)
+            ->header('Content-Type', 'text/plain')
+            ->header('Content-Disposition', "attachment; filename=\"$filename\"");
+    }
+
+    // [GOD-TIER]: Import a .ydk file to instantly populate a deck
+    public function importYdk(Request $request, $deckId)
+    {
+        $request->validate(['ydk_file' => 'required|file|max:2048']);
+        $deck = \App\Models\Deck::findOrFail($deckId);
+        
+        $contents = file_get_contents($request->file('ydk_file')->getRealPath());
+        $lines = explode("\n", str_replace("\r", "", $contents));
+        
+        $location = 'main';
+        $cardsAdded = 0;
+
+        foreach ($lines as $line) {
+            $line = trim($line);
+            if ($line === '#main') { $location = 'main'; continue; }
+            if ($line === '#extra') { $location = 'extra'; continue; }
+            if ($line === '!side') { $location = 'side'; continue; }
+            
+            if (is_numeric($line) && in_array($location, ['main', 'extra'])) {
+                $card = \App\Models\Card::where('passcode', $line)->first();
+                if ($card) {
+                    $existing = $deck->cards()->where('card_id', $card->id)->where('location', $location)->first();
+                    if ($existing) {
+                        if ($existing->pivot->quantity < 3) {
+                            $deck->cards()->updateExistingPivot($card->id,['quantity' => $existing->pivot->quantity + 1]);
+                        }
+                    } else {
+                        $deck->cards()->attach($card->id, ['quantity' => 1, 'location' => $location]);
+                    }
+                    $cardsAdded++;
+                }
+            }
+        }
+
+        return back()->with('success', "YDK Imported: $cardsAdded cards decoded and added to your deck!");
+    }
 }

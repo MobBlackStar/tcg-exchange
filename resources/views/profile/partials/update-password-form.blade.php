@@ -19,7 +19,7 @@
     }
 </style>
 
-<section>
+<section style="text-align: center;">
     <header style="margin-bottom: 30px;">
         <h2 style="color: var(--chrome-c); font-size: 1.6rem; font-family: 'Orbitron', sans-serif; text-transform: uppercase;">
             {{ __('Update Password') }}
@@ -29,7 +29,7 @@
         </p>
     </header>
 
-    <form method="post" action="{{ route('password.update') }}" style="display: flex; flex-direction: column; gap: 25px;">
+    <form method="post" action="{{ route('password.update') }}" style="display: flex; flex-direction: column; align-items: center; gap: 25px;">
         @csrf
         @method('put')
 
@@ -51,7 +51,7 @@
             <x-input-error :messages="$errors->updatePassword->get('password_confirmation')" style="color: var(--a1);" />
         </div>
 
-        <div style="display: flex; align-items: center; gap: 20px; margin-top: 10px;">
+        <div style="display: flex; align-items: center; justify-content: center; gap: 20px; margin-top: 10px;">
             <button class="btn magenta md"><span class="inner">{{ __('UPDATE CIPHER') }}</span></button>
 
             @if (session('status') === 'password-updated')

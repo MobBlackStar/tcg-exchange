@@ -11,6 +11,7 @@
 
     <!-- Neon Bauhaus Core Styles -->
     <link rel="stylesheet" href="{{ asset('css/neon.css') }}">
+    <meta name="csrf-token" content="{{ csrf_token() }}">
     
     @stack('styles')
 </head>
@@ -25,63 +26,61 @@
 
     <div class="page">
         <!-- THE NAVBAR -->
-        <!-- THE NAVBAR -->
-<header class="nav">
-    <div class="nav-inner">
-        <a href="/" class="logo" aria-label="NBD home">
-            <span class="logo-shapes"><span class="s1"></span><span class="s2"></span><span class="s3"></span></span>
-            <span class="logo-text">TCG<b>EX</b></span>
-        </a>
-        <nav class="nav-links">
-            <a href="{{ route('catalog') }}">&gt; CATALOG</a>
-            <a href="{{ route('cart.index') }}">&gt; MY CART</a>
-            <a href="{{ route('inventory.index') }}">&gt; MY BINDER</a>
-            <a href="{{ route('decks.index') }}">&gt; MY DECKS</a> <!-- HERE IT IS -->
-            
-            @auth
-                <a href="{{ url('/dashboard') }}">&gt; DASHBOARD</a>
-            @else
-                <a href="{{ route('login') }}">&gt; LOGIN</a>
-            @endauth
-        </nav>
-    </div>
-</header>
+        <header class="nav">
+            <div class="nav-inner">
+                <a href="/" class="logo" aria-label="NBD home">
+                    <span class="logo-shapes"><span class="s1"></span><span class="s2"></span><span class="s3"></span></span>
+                    <span class="logo-text">TCG<b>EX</b></span>
+                </a>
+                <nav class="nav-links">
+                    <a href="{{ route('catalog') }}">&gt; CATALOG</a>
+                    <a href="{{ route('wishlist.index') }}">&gt; FAVORITES</a>
+                    <a href="{{ route('cart.index') }}">&gt; MY CART</a>
+                    <a href="{{ route('inventory.index') }}">&gt; MY BINDER</a>
+                    <a href="{{ route('decks.index') }}">&gt; MY DECKS</a>
+                    
+                    @auth
+                        <a href="{{ url('/dashboard') }}">&gt; DASHBOARD</a>
+                    @else
+                        <a href="{{ route('login') }}">&gt; LOGIN</a>
+                        <a href="{{ route('register') }}">&gt; REGISTER</a>
+                    @endauth
+                </nav>
+            </div>
+        </header>
 
         <!-- MAIN CONTENT INJECTION -->
         <main style="min-height: 80vh; padding-top: 100px;">
             <!-- THE DOPAMINE FEEDBACK -->
-<div class="container" style="margin-top: 20px;">
-    @if(session('success'))
-        <div class="tag yellow" style="width: 100%; justify-content: center; margin-bottom: 20px;">
-            <span class="label">&gt; {{ session('success') }}</span>
-        </div>
-    @endif
+            <div class="container" style="margin-top: 20px;">
+                @if(session('success'))
+                    <div class="tag yellow" style="width: 100%; justify-content: center; margin-bottom: 20px;">
+                        <span class="label">&gt; {{ session('success') }}</span>
+                    </div>
+                @endif
 
-    @if(session('error'))
-        <div class="tag cyan-on-dark" style="width: 100%; justify-content: center; margin-bottom: 20px; border-color: var(--a1);">
-            <span class="label" style="color: var(--a1);">&gt; {{ session('error') }}</span>
-        </div>
-    @endif
-</div>
-@yield('content')
+                @if(session('error'))
+                    <div class="tag cyan-on-dark" style="width: 100%; justify-content: center; margin-bottom: 20px; border-color: var(--a1);">
+                        <span class="label" style="color: var(--a1);">&gt; {{ session('error') }}</span>
+                    </div>
+                @endif
+            </div>
+            
+            @yield('content')
         </main>
 
         <!-- THE FOOTER -->
         <footer class="foot">
             <div class="foot-bar">
-                <div class="foot-bar-inner">
+                <div class="foot-bar-inner" style="text-align: center; padding: 20px; color: var(--chrome-c); opacity: 0.5; font-family: 'Share Tech Mono'; width: 100%; justify-content: center;">
                     <span>&gt; © 2026 THE TCG EXCHANGE. ALL SIGNALS RESERVED.</span>
-                    <span class="sig"><span class="d anim-pulse-glow"></span> system online</span>
                 </div>
             </div>
         </footer>
     </div>
 
-    <!-- ========================================== -->
-    <!-- THE DUELIST COMM DRAWER (AJAX CHAT UI)     -->
-    <!-- ========================================== -->
+    <!-- THE DUELIST COMM DRAWER -->
     <div id="chatDrawer" style="position: fixed; right: -400px; top: 0; width: 350px; height: 100vh; background: var(--bg); border-left: 4px solid var(--a5); z-index: 1000; transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1); box-shadow: -10px 0 40px rgba(0,0,0,0.8); padding: 25px; display: flex; flex-direction: column;">
-        
         <div style="display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--a5); padding-bottom: 15px; margin-bottom: 20px;">
             <h3 class="font-display" style="color: var(--a5); margin: 0; font-size: 1.2rem; letter-spacing: 2px;">&gt; DUELIST_COMM</h3>
             <button onclick="toggleChat()" style="color: var(--a1); font-family: 'Share Tech Mono', monospace; cursor: pointer; background: none; border: none;">[X] CLOSE</button>
@@ -99,47 +98,119 @@
         </div>
     </div>
 
-    <!-- Floating Neon Chat Button -->
+    <!-- Floating Neon Button -->
     <button onclick="toggleChat()" id="chatFab" style="position: fixed; bottom: 30px; right: 30px; width: 65px; height: 65px; border-radius: 50%; background: var(--a5); border: 4px solid var(--ink-c); cursor: pointer; z-index: 999; display: flex; align-items: center; justify-content: center; box-shadow: 0 0 20px var(--a5);" class="anim-pulse-glow">
         <svg style="width: 30px; height: 30px; color: var(--ink-c);" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path></svg>
     </button>
 
-    <!-- ========================================== -->
-    <!-- SYSTEM NOTIFICATION POPUP (Sarah's Polish) -->
-    <!-- ========================================== -->
-    <div id="neon-notification">
+    <!-- SYSTEM NOTIFICATION POPUP -->
+    <div id="neon-notification" style="position: fixed; bottom: -100px; left: 50%; transform: translateX(-50%); z-index: 9999; background: var(--bg); border: 3px solid var(--a5); box-shadow: 0 0 20px var(--a5), 6px 6px 0 var(--ink-c); padding: 15px 30px; transition: all 0.5s cubic-bezier(0.19, 1, 0.22, 1); pointer-events: none;">
         <div style="display: flex; align-items: center; gap: 15px;">
             <span class="dot anim-pulse-glow" style="width: 10px; height: 10px; background: var(--a5); border-radius: 50%;"></span>
-            <span class="msg" id="notification-text">ARCHIVE_SUCCESS</span>
+            <span class="msg" id="notification-text" style="font-family: 'Share Tech Mono', monospace; color: var(--a5); text-transform: uppercase; letter-spacing: 2px; font-weight: bold;">ARCHIVE_SUCCESS</span>
         </div>
     </div>
 
-    <!-- ========================================== -->
-    <!-- MASTER JAVASCRIPT LOGIC                    -->
-    <!-- ========================================== -->
+    <!-- MASTER JAVASCRIPT LOGIC -->
     <script>
-        // --- 1. NOTIFICATION & WISHLIST LOGIC ---
-        function showNotification(message) {
-            const toast = document.getElementById('neon-notification');
-            const text = document.getElementById('notification-text');
-            text.innerText = message;
-            toast.classList.add('active');
-            setTimeout(() => { toast.classList.remove('active'); }, 3000);
+        const CSRF_TOKEN = '{{ csrf_token() }}';
+        const AUTH_USER_ID = '{{ auth()->id() ?? 0 }}';
+        let chatPartnerId = 1; // Default to Seto Kaiba for testing
+
+        // --- MOATAZ'S CART INTEGRATION ---
+        async function addToCart(listingId) {
+            try {
+                let response = await fetch('/cart/add', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': CSRF_TOKEN
+                    },
+                    body: JSON.stringify({ listing_id: listingId, quantity: 1 }) 
+                });
+                
+                let data = await response.json();
+                
+                if(data.success || response.ok) {
+                    showNotification("> " + (data.message ? data.message.toUpperCase() : "ARTIFACT_ADDED_TO_CARGO"), false);
+                } else {
+                    showNotification("> ERROR: " + (data.message ? data.message.toUpperCase() : "TRANSACTION_FAILED"), true);
+                }
+            } catch (e) {
+                showNotification("> ERROR: SERVER_UNREACHABLE", true);
+            }
         }
 
-        function toggleWishlist(event, cardId) {
-            event.preventDefault();
-            var btn = event.currentTarget;
-            btn.classList.toggle('active');
+        // --- 1. NOTIFICATION & WISHLIST LOGIC ---
+        function showNotification(message, vibrate = false, priority = false) {
+            const toast = document.getElementById('neon-notification');
+            const text = document.getElementById('notification-text');
             
-            if(btn.classList.contains('active')) {
-                showNotification("> DATA_SAVED_TO_HEART");
-                btn.querySelector('svg').style.fill = 'var(--a1)'; 
-                btn.querySelector('svg').style.color = 'var(--a1)';
+            text.innerText = message;
+            
+            // THE COLOR SWITCH
+            if (priority) {
+                // High Priority: PURE RED (var(--a1))
+                text.style.color = "var(--a1)";
+                toast.style.borderColor = "var(--a1)";
+                toast.style.boxShadow = "0 0 25px var(--a1), 6px 6px 0 var(--ink-c)";
             } else {
-                showNotification("> REMOVED_FROM_ARCHIVE");
-                btn.querySelector('svg').style.fill = 'none'; 
-                btn.querySelector('svg').style.color = 'var(--chrome-c)';
+                // Standard: HOT PINK (var(--a4))
+                text.style.color = "var(--a4)";
+                toast.style.borderColor = "var(--a4)";
+                toast.style.boxShadow = "0 0 20px var(--a4), 6px 6px 0 var(--ink-c)";
+            }
+            
+            toast.style.bottom = '40px'; 
+            
+            if(vibrate) toast.classList.add('vibrate-alert');
+
+            setTimeout(() => { 
+                toast.style.bottom = '-100px'; 
+                toast.classList.remove('vibrate-alert');
+            }, 3000);
+        }
+
+        async function toggleWishlist(event, cardId) {
+            event.preventDefault();
+            const btn = event.currentTarget;
+            const wholeCard = btn.closest('.tcard');
+
+            try {
+                const response = await fetch('/wishlist/toggle', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json', 'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]').content },
+                    body: JSON.stringify({ card_id: cardId })
+                });
+                
+                if (!response.ok) throw new Error('Unauthorized');
+                const data = await response.json();
+
+                if (data.status === 'added') {
+                    btn.classList.add('active');
+                    if(wholeCard) wholeCard.classList.add('wishlisted');
+                    
+                    // [TECH LEAD FIX]: Brutally force the styles to trigger the animation
+                    btn.style.background = 'var(--a1)';
+                    btn.style.borderColor = 'var(--a1)';
+                    const svg = btn.querySelector('svg');
+                    if(svg) { svg.style.fill = 'white'; svg.style.color = 'white'; }
+                    
+                    showNotification("> DATA_SAVED_TO_HEART", true, true); 
+                } else {
+                    btn.classList.remove('active');
+                    if(wholeCard) wholeCard.classList.remove('wishlisted');
+                    
+                    // Revert styles
+                    btn.style.background = 'none';
+                    btn.style.borderColor = 'var(--a4)';
+                    const svg = btn.querySelector('svg');
+                    if(svg) { svg.style.fill = 'none'; svg.style.color = 'var(--a4)'; }
+                    
+                    showNotification("> REMOVED_FROM_ARCHIVE", false, false);
+                }
+            } catch (e) {
+                showNotification("> ERROR: LOGIN REQUIRED", true, true);
             }
         }
 
@@ -153,47 +224,85 @@
             } else {
                 drawer.style.right = '0px';
                 fab.style.display = 'none';
+                fetchMessages();
             }
         }
 
-        // --- 3. GOD-TIER AJAX LOGIC (Connecting to Moataz) ---
+        // --- 3. AJAX CHAT LOGIC ---
         async function sendMessage() {
-            const input = document.getElementById('chatInput');
-            const box = document.getElementById('chatMessages');
-            const content = input.value.trim();
-            
+            var input = document.getElementById('chatInput');
+            var box = document.getElementById('chatMessages');
+            var content = input.value.trim();
+
             if (content === "") return;
 
-            // Instantly show it on screen
-            var msg = document.createElement('div');
-            msg.className = 'tag';
-            msg.style.alignSelf = 'flex-end';
-            msg.style.borderColor = 'var(--a4)';
-            msg.innerHTML = '<span class="label" style="color: var(--a4);">YOU: ' + content + '</span>';
-            box.appendChild(msg);
-            box.scrollTop = box.scrollHeight;
-            input.value = "";
+            // --- 1. VISUAL FEEDBACK (Sarah's UI logic) ---
+            const msgDiv = document.createElement('div');
+            msgDiv.className = 'tag';
+            msgDiv.style.alignSelf = 'flex-end';
+            msgDiv.style.borderColor = 'var(--a4)'; // Hot Pink/Magenta
+            msgDiv.innerHTML = '<span class="label" style="color: var(--a4);">YOU: ' + content + '</span>';
+            box.appendChild(msgDiv);
+            
+            input.value = ""; // Clear input
+            box.scrollTop = box.scrollHeight; // Auto-scroll
 
-            // Silently POST to database
+            // --- 2. TRANSMISSION (The Bridge to Moataz) ---
             try {
                 const response = await fetch('/chat/send', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
-                        'X-CSRF-TOKEN': '{{ csrf_token() }}'
+                        'X-CSRF-TOKEN': CSRF_TOKEN
                     },
                     body: JSON.stringify({
-                        receiver_id: 1, // Hardcoded to Seto Kaiba for Demo
+                        receiver_id: 2, // Default chat partner
                         content: content
                     })
                 });
-                const data = await response.json();
-                if(data.status === 'success') console.log('Message Encrypted and Sent.');
-            } catch (error) {
-                console.error('Transmission Failed:', error);
-                showNotification('> ERROR: TRANSMISSION FAILED');
+
+                if (!response.ok) {
+                    console.warn("System: Backend not responding. Staying in Local-Only mode.");
+                }
+            } catch (e) {
+                console.error("Comm Satellite Offline. Message saved to local cache only.");
             }
         }
+
+        async function fetchMessages() {
+            try {
+                const response = await fetch('/chat/fetch/' + chatPartnerId);
+                if (!response.ok) return; // Exit if Moataz's backend isn't ready
+
+                const data = await response.json();
+                const box = document.getElementById('chatMessages');
+
+                data.forEach(msg => {
+                    // THE TRICK: Check if this message ID is already on the screen
+                    const existingMessage = document.getElementById('msg-' + msg.id);
+                    
+                    if (!existingMessage) {
+                        const msgDiv = document.createElement('div');
+                        msgDiv.id = 'msg-' + msg.id; // Give it a unique ID
+                        msgDiv.className = 'tag';
+                        
+                        const isMe = msg.sender_id == AUTH_USER_ID;
+                        msgDiv.style.alignSelf = isMe ? 'flex-end' : 'flex-start';
+                        msgDiv.style.borderColor = isMe ? 'var(--a4)' : 'var(--a5)';
+                        
+                        msgDiv.innerHTML = '<span class="label" style="color: ' + (isMe ? 'var(--a4)' : 'var(--a5)') + ';">' + 
+                                           (isMe ? 'YOU' : 'OPPONENT') + ': ' + msg.content + '</span>';
+                        
+                        box.appendChild(msgDiv);
+                        box.scrollTop = box.scrollHeight;
+                    }
+                });
+            } catch (error) {
+                // Librarian is asleep, leave the chalkboard alone
+            }
+        }
+        
+        setInterval(fetchMessages, 4000);
     </script>
 
     @stack('scripts')
