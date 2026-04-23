@@ -63,7 +63,6 @@
     @endif
 </div>
 @yield('content')
-            @yield('content')
         </main>
 
         <!-- THE FOOTER -->

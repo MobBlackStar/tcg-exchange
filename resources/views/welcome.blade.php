@@ -7,7 +7,7 @@
         <div class="shape sq-rot bgc-3 anim-float-rev" style="top:20%;left:88%;width:44px;height:44px"></div>
         <div class="shape tri bgc-5 anim-wiggle" style="top:70%;left:4%;width:60px;height:60px"></div>
     </div>
-    
+
     <span class="hero-bgword" aria-hidden="true">DUEL</span>
 
     <div class="container hero-grid">
@@ -26,6 +26,10 @@
                 <a href="/catalog" class="btn magenta lg"><span class="inner">Enter Catalog</span></a>
             </div>
         </div>
+
+        @if (Route::has('login'))
+            <div class="h-14.5 hidden lg:block"></div>
+        @endif
 
         <div class="hero-art">
             <div class="bg"></div>

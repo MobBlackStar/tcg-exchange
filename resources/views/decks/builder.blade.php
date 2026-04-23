@@ -66,8 +66,9 @@
             </form>
             
             <div style="display: grid; grid-template-columns: repeat(3, 1fr); gap: 5px;">
-                @foreach(\App\Models\Card::where('name', 'like', '%' . request('library_search') . '%')->get() as $card)
-                    <button onclick="openSummonModal('{{ $card->id }}', '{{ $card->name }}')" 
+                <!-- [TECH LEAD FIX]: Limited to 50 cards to prevent memory exhaustion -->
+                @foreach(\App\Models\Card::where('name', 'like', '%' . request('library_search') . '%')->limit(50)->get() as $card)
+                    <button onclick="openSummonModal('{{ $card->id }}', '{{ addslashes($card->name) }}')" 
                             style="background:none; border:none; cursor:pointer; width:100%;">
                         <img src="{{ $card->image_url }}" title="{{ $card->name }}" style="width:100%; border:1px solid #444;">
                     </button>
