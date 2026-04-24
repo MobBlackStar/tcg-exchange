@@ -111,7 +111,7 @@
         <div style="margin-top: 20px; border-top: 2px solid var(--ink-c); padding-top: 20px;">
             <textarea id="chatInput" placeholder="Enter message..." style="width: 100%; background: var(--ink-c); color: var(--chrome-c); border: 2px solid var(--a4); padding: 12px; font-family: 'Share Tech Mono', monospace; resize: none; margin-bottom: 10px;"></textarea>
             <div style="display: flex; gap: 10px;">
-                <button onclick="initiateTrade()" class="btn yellow sm" style="flex: 1;"><span class="inner">⇄ OFFER</span></button>
+                <button onclick="openTradeModal()" class="btn yellow sm" style="flex: 1;"><span class="inner">⇄ OFFER</span></button>
                 <button onclick="sendMessage()" class="btn magenta sm" style="flex: 2;"><span class="inner">Transmit</span></button>
             </div>
         </div>
