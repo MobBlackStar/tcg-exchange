@@ -29,7 +29,7 @@
                 <div style="margin-top: 20px; border-top: 2px solid var(--ink-c); padding-top: 15px;">
                     @foreach($order->items as $item)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-family: 'Share Tech Mono';">
-                            <span>{{ $item->quantity }}x {{ $item->listing->card->name }}</span>
+                            <span>{{ $item->quantity }}x {{ $item->listing->card->name ?? 'Archived Artifact' }}</span>
                             <span>{{ $item->price_locked }} DT</span>
                         </div>
                     @endforeach
@@ -87,15 +87,15 @@
                 <div style="margin-top: 20px; border-top: 2px solid var(--ink-c); padding-top: 15px;">
                     @foreach($order->items as $item)
                         <div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-family: 'Share Tech Mono';">
-                            <span>{{ $item->listing->card->name }} (x{{ $item->quantity }})</span>
+                            <span>{{ $item->listing->card->name ?? 'Archived Artifact' }} (x{{ $item->quantity }})</span>
                             <span>{{ $item->price_locked }} DT</span>
                         </div>
                     @endforeach
                     <div style="margin-top: 15px; font-weight: bold; font-family: 'Orbitron'; border-top: 1px solid var(--ink-c); padding-top: 10px; display: flex; justify-content: space-between; align-items: center;">
                         <span>TOTAL: {{ $order->total_price }} DT</span>
                         
-                        <!-- BUYER CONTROLS: Leave a Review (Only if order is Validated!) -->
-                        @if($order->status == 'Validée')
+                        <!-- BUYER CONTROLS: Leave a Review (Only if order is Validated and seller is known!) -->
+                        @if($order->status == 'Validée' && $order->items->first() && $order->items->first()->listing)
                             <button onclick="openReviewModal({{ $order->id }}, {{ $order->items->first()->listing->seller_id }})" class="btn magenta sm">
                                 <span class="inner">LEAVE REVIEW</span>
                             </button>

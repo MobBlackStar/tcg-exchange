@@ -54,15 +54,13 @@ class OrderController extends Controller
 
             // Create the Order Items
             foreach ($cart as $id => $item) {
-                OrderItem::create([
-                    'order_id' => $order->id,
-                    'listing_id' => $item['listing_id'],
-                    'price_locked' => $item['price'], // Locks the price forever
-                    'quantity' => $item['quantity'],
-                ]);
+                // Deduct stock from the seller's listing FIRST to ensure availability
+                $listing = Listing::lockForUpdate()->find($item['listing_id'] ?? $id);
 
-                // Deduct stock from the seller's listing
-                $listing = Listing::find($item['listing_id']);
+                if (!$listing || !$listing->is_active || $listing->quantity < $item['quantity']) {
+                    throw new \Exception("The artifact '{$item['name']}' is no longer available in the requested quantity. Please update your Vault.");
+                }
+
                 $listing->quantity -= $item['quantity'];
 
                 // If stock reaches 0, hide it from the market
@@ -70,6 +68,13 @@ class OrderController extends Controller
                     $listing->is_active = false;
                 }
                 $listing->save();
+
+                OrderItem::create([
+                    'order_id' => $order->id,
+                    'listing_id' => $listing->id,
+                    'price_locked' => $item['price'], // Locks the price forever
+                    'quantity' => $item['quantity'],
+                ]);
 
                 // [TECH LEAD FIX]: Auto-Notify Seller via Chat
                 \App\Models\Message::create([

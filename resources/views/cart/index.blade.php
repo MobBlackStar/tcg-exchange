@@ -32,7 +32,7 @@
                                     <form action="{{ route('cart.update') }}" method="POST" style="display: flex; gap: 5px; align-items: center; margin: 0;">
                                         @csrf @method('PATCH')
                                         <input type="hidden" name="listing_id" value="{{ $id }}">
-                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" style="width: 60px; background: #000; border: 1px solid var(--a5); color: #fff; padding: 5px; text-align: center;">
+                                        <input type="number" name="quantity" value="{{ $item['quantity'] }}" min="1" max="{{ $item['max_stock'] ?? 1 }}" style="width: 60px; background: #000; border: 1px solid var(--a5); color: #fff; padding: 5px; text-align: center;">
                                         <button type="submit" style="color: var(--a3); background: none; border: none; cursor: pointer; font-family: 'Share Tech Mono';">[UPD]</button>
                                     </form>
                                 </td>
